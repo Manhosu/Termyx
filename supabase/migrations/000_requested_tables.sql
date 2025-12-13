@@ -1,0 +1,154 @@
+-- ============================================
+-- TERMYX - Tables as Requested
+-- Execute this in Supabase SQL Editor
+-- Project: xekjxblesgdrnqaxpjwx
+-- ============================================
+
+-- Enable necessary extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- ============================================
+-- TABLE: plans
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  price_monthly NUMERIC(10,2) DEFAULT 0,
+  price_annual NUMERIC(10,2) DEFAULT 0,
+  credits_included INTEGER DEFAULT 0,
+  max_templates INTEGER DEFAULT 0,
+  features JSONB DEFAULT '[]',
+  is_active BOOLEAN DEFAULT true,
+  gateway_price_id TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================
+-- TABLE: users
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.users (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT UNIQUE NOT NULL,
+  name TEXT,
+  company_name TEXT,
+  company_logo TEXT,
+  role TEXT DEFAULT 'user' CHECK (role IN ('user', 'admin', 'enterprise')),
+  plan_id UUID REFERENCES plans(id),
+  credits INTEGER DEFAULT 3,
+  is_active BOOLEAN DEFAULT true,
+  onboarding_completed BOOLEAN DEFAULT false,
+  business_category TEXT,
+  stripe_customer_id TEXT,
+  subscription_id TEXT,
+  subscription_status TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  metadata JSONB DEFAULT '{}'
+);
+
+-- ============================================
+-- TABLE: templates
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  name TEXT NOT NULL,
+  category TEXT NOT NULL CHECK (category IN ('contrato', 'recibo', 'orcamento', 'termo', 'outro')),
+  description TEXT,
+  content_html TEXT NOT NULL,
+  placeholders JSONB DEFAULT '[]',
+  is_public BOOLEAN DEFAULT false,
+  price_credit INTEGER DEFAULT 1,
+  version INTEGER DEFAULT 1,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================
+-- TABLE: documents
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.documents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  template_id UUID REFERENCES templates(id),
+  title TEXT NOT NULL,
+  data JSONB NOT NULL DEFAULT '{}',
+  pdf_path TEXT,
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'generated', 'sent', 'archived')),
+  credits_charged INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  generated_at TIMESTAMPTZ
+);
+
+-- ============================================
+-- TABLE: payments
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.payments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id),
+  amount NUMERIC(10,2) NOT NULL,
+  currency TEXT DEFAULT 'BRL',
+  gateway TEXT NOT NULL,
+  gateway_id TEXT,
+  type TEXT NOT NULL CHECK (type IN ('subscription', 'credits', 'one_time')),
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'paid', 'failed', 'refunded')),
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================
+-- TABLE: document_sends
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.document_sends (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id),
+  channel TEXT NOT NULL CHECK (channel IN ('email', 'whatsapp')),
+  recipient TEXT NOT NULL,
+  status TEXT DEFAULT 'sent',
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================
+-- TABLE: document_shares
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.document_shares (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id),
+  token TEXT UNIQUE NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  views INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================
+-- TABLE: audit_logs
+-- ============================================
+CREATE TABLE IF NOT EXISTS public.audit_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  action TEXT NOT NULL,
+  resource_type TEXT,
+  resource_id UUID,
+  payload JSONB DEFAULT '{}',
+  ip_address TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- ============================================
+-- SEED: Plans
+-- ============================================
+INSERT INTO plans (name, slug, price_monthly, price_annual, credits_included, max_templates, features) VALUES
+('Free', 'free', 0, 0, 3, 0, '["3 documentos/mes", "Watermark no PDF", "Templates publicos"]'),
+('Basic', 'basic', 19.00, 190.00, 0, 3, '["Documentos ilimitados", "Sem watermark", "3 templates customizados", "Envio por email"]'),
+('Pro', 'pro', 49.00, 490.00, 100, -1, '["Tudo do Basic", "Templates ilimitados", "100 creditos inclusos", "Assinatura em tela", "Envio WhatsApp", "Suporte prioritario"]'),
+('Enterprise', 'enterprise', 150.00, 1500.00, 500, -1, '["Tudo do Pro", "Multi-usuarios", "Marca branca", "API de integracao", "Gerente de conta"]')
+ON CONFLICT (slug) DO NOTHING;
+
+-- Success message
+SELECT 'Tables created and plans seeded successfully!' as status;
