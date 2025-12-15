@@ -1,27 +1,58 @@
+'use client'
+
 import Link from 'next/link'
-import { FileText, Zap, Shield, CreditCard, ArrowRight, Check, Star } from 'lucide-react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { FileText, Zap, Shield, CreditCard, ArrowRight, Sparkles, Users, TrendingUp, Menu, X } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import {
+  MeshGradient,
+  FloatingCard,
+  GradientText,
+  PremiumButton,
+  FeatureIcon,
+  StatCounter,
+  TestimonialCard,
+  PricingCard,
+  FloatingBadge,
+  AnimatedBorder,
+} from '@/components/ui/premium-design'
 
 const features = [
   {
     icon: FileText,
     title: 'Templates Profissionais',
-    description: 'Contratos, recibos, orcamentos e mais. Todos revisados por especialistas.'
+    description: 'Biblioteca com contratos, recibos, orcamentos e mais. Todos juridicamente revisados por especialistas.',
+    gradient: 'from-blue-500 to-cyan-500',
+    delay: 0,
   },
   {
     icon: Zap,
     title: 'Geracao Instantanea',
-    description: 'Preencha os dados e receba seu PDF em segundos. Simples assim.'
+    description: 'Preencha os dados e receba seu PDF profissional em segundos. Otimizado para produtividade maxima.',
+    gradient: 'from-purple-500 to-pink-500',
+    delay: 0.1,
   },
   {
     icon: Shield,
-    title: 'Dados Seguros',
-    description: 'Seus documentos ficam armazenados com criptografia de ponta a ponta.'
+    title: 'Seguranca Total',
+    description: 'Seus documentos protegidos com criptografia de ponta a ponta. Conformidade total com LGPD.',
+    gradient: 'from-emerald-500 to-teal-500',
+    delay: 0.2,
   },
   {
     icon: CreditCard,
-    title: 'Pague por Uso',
-    description: 'Sem mensalidades obrigatorias. Compre creditos quando precisar.'
+    title: 'Flexibilidade de Pagamento',
+    description: 'Modelo pay-as-you-go. Sem mensalidades obrigatorias, compre creditos quando precisar.',
+    gradient: 'from-orange-500 to-amber-500',
+    delay: 0.3,
   },
+]
+
+const stats = [
+  { value: '50K', suffix: '+', label: 'Documentos Gerados' },
+  { value: '15K', suffix: '+', label: 'Usuarios Ativos' },
+  { value: '99.9', suffix: '%', label: 'Uptime Garantido' },
+  { value: '4.9', suffix: '', label: 'Avaliacao Media' },
 ]
 
 const plans = [
@@ -29,302 +60,643 @@ const plans = [
     name: 'Free',
     price: 'R$ 0',
     period: '/mes',
-    description: 'Para comecar',
-    features: ['3 documentos/mes', 'Templates basicos', 'Suporte por email'],
-    cta: 'Comecar gratis',
-    popular: false,
+    description: 'Perfeito para comecar',
+    features: ['3 documentos/mes', 'Templates basicos', 'Suporte por email', 'Exportacao PDF'],
+    highlighted: false,
   },
   {
     name: 'Pro',
-    price: 'R$ 29',
+    price: 'R$ 49',
     period: '/mes',
     description: 'Para profissionais',
-    features: ['50 documentos/mes', 'Todos os templates', 'Envio por email/WhatsApp', 'Suporte prioritario'],
-    cta: 'Assinar Pro',
-    popular: true,
+    features: ['Documentos ilimitados', 'Todos os templates', 'Suporte prioritario', 'API de integracao', 'Marca d\'agua removida', 'Analytics avancado'],
+    highlighted: true,
   },
   {
     name: 'Enterprise',
-    price: 'R$ 99',
+    price: 'R$ 199',
     period: '/mes',
-    description: 'Para empresas',
-    features: ['Documentos ilimitados', 'Templates personalizados', 'API de integracao', 'Suporte dedicado'],
-    cta: 'Falar com vendas',
-    popular: false,
+    description: 'Para grandes equipes',
+    features: ['Tudo do Pro', 'Usuarios ilimitados', 'Templates customizados', 'SSO/SAML', 'SLA garantido', 'Gerente de conta dedicado'],
+    highlighted: false,
   },
 ]
 
 const testimonials = [
   {
-    name: 'Maria Silva',
-    role: 'Advogada',
-    content: 'O Termyx me economiza horas toda semana. Gero contratos em minutos que antes levavam horas para formatar.',
-    avatar: 'MS',
+    quote: 'O Termyx revolucionou como geramos contratos. O que levava horas agora leva segundos. Economia incrivel de tempo.',
+    author: 'Maria Silva',
+    role: 'Advogada, Silva & Associados',
+    rating: 5,
   },
   {
-    name: 'Carlos Santos',
-    role: 'Contador',
-    content: 'Meus clientes ficam impressionados com a qualidade dos documentos. Interface muito facil de usar.',
-    avatar: 'CS',
+    quote: 'Interface intuitiva e documentos de alta qualidade. Meus clientes ficam impressionados com a rapidez na entrega.',
+    author: 'Carlos Santos',
+    role: 'Contador, CS Contabilidade',
+    rating: 5,
   },
   {
-    name: 'Ana Costa',
-    role: 'Autonoma',
-    content: 'Finalmente um sistema que funciona! Envio orcamentos profissionais em segundos pelo WhatsApp.',
-    avatar: 'AC',
+    quote: 'A melhor plataforma de documentos que ja usei. Suporte excepcional e recursos que realmente fazem diferenca.',
+    author: 'Ana Oliveira',
+    role: 'Empreendedora',
+    rating: 5,
   },
 ]
 
+const navLinks = [
+  { label: 'Recursos', href: '#recursos' },
+  { label: 'Planos', href: '#planos' },
+  { label: 'Depoimentos', href: '#depoimentos' },
+]
+
 export default function LandingPage() {
+  const heroRef = useRef<HTMLDivElement>(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  })
+
+  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95])
+
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-xl border-b border-neutral-200/50 dark:border-neutral-800/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">T</span>
-              </div>
-              <span className="text-xl font-bold text-neutral-900 dark:text-white">Termyx</span>
-            </Link>
-            <nav className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors">
-                Recursos
-              </a>
-              <a href="#pricing" className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors">
-                Precos
-              </a>
-              <a href="#testimonials" className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors">
-                Depoimentos
-              </a>
-            </nav>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/login"
-                className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
+    <div className="min-h-screen bg-slate-50 dark:bg-neutral-950 overflow-x-hidden">
+      {/* ============================================================ */}
+      {/* HEADER / NAVIGATION */}
+      {/* ============================================================ */}
+      <motion.header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? 'bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border-b border-white/20 dark:border-neutral-800/20 shadow-lg shadow-black/5'
+            : 'bg-transparent'
+        }`}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <nav className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <motion.div
+              className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25"
+              whileHover={{ scale: 1.05, rotate: 5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="text-white font-bold text-xl">T</span>
+            </motion.div>
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Termyx
+            </span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <motion.a
+                key={link.label}
+                href={link.href}
+                className="text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white font-medium transition-colors"
+                whileHover={{ y: -2 }}
+              >
+                {link.label}
+              </motion.a>
+            ))}
+          </div>
+
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center gap-4">
+            <Link href="/login">
+              <motion.button
+                className="px-5 py-2.5 text-neutral-700 dark:text-neutral-300 font-medium hover:text-neutral-900 dark:hover:text-white transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 Entrar
-              </Link>
-              <Link
-                href="/signup"
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-              >
-                Criar conta
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-sm font-medium mb-8">
-            <Star className="w-4 h-4" />
-            Mais de 10.000 documentos gerados
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-900 dark:text-white mb-6 leading-tight">
-            Crie documentos profissionais
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              em minutos, nao horas
-            </span>
-          </h1>
-          <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-10">
-            Contratos, recibos, orcamentos e mais. Preencha um formulario simples e receba seu PDF pronto para uso. Sem complicacao.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/signup"
-              className="flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded-xl transition-colors"
-            >
-              Comecar gratuitamente
-              <ArrowRight className="w-5 h-5" />
+              </motion.button>
             </Link>
-            <Link
-              href="#features"
-              className="px-8 py-4 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 text-lg font-medium rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors"
-            >
-              Ver como funciona
+            <Link href="/signup">
+              <motion.button
+                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Cadastrar
+              </motion.button>
             </Link>
           </div>
-        </div>
-      </section>
 
-      {/* Features */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-neutral-50 dark:bg-neutral-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-neutral-900 dark:text-white mb-4">
-              Tudo que voce precisa para gerar documentos
-            </h2>
-            <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-              Uma plataforma completa para criar, gerenciar e enviar documentos profissionais
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="bg-white dark:bg-neutral-800 rounded-2xl p-6 border border-neutral-200 dark:border-neutral-700"
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
-                  <feature.icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-neutral-600 dark:text-neutral-400">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-neutral-900 dark:text-white mb-4">
-              Planos para todos os tamanhos
-            </h2>
-            <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-              Comece gratis e faca upgrade quando precisar
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {plans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative rounded-2xl p-8 ${
-                  plan.popular
-                    ? 'bg-gradient-to-br from-blue-600 to-purple-600 text-white'
-                    : 'bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800'
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-yellow-400 text-yellow-900 text-sm font-medium rounded-full">
-                    Mais popular
-                  </div>
-                )}
-                <h3 className={`text-lg font-semibold mb-2 ${plan.popular ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>
-                  {plan.name}
-                </h3>
-                <p className={`text-sm mb-4 ${plan.popular ? 'text-blue-100' : 'text-neutral-500'}`}>
-                  {plan.description}
-                </p>
-                <div className="flex items-baseline gap-1 mb-6">
-                  <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>
-                    {plan.price}
-                  </span>
-                  <span className={plan.popular ? 'text-blue-100' : 'text-neutral-500'}>
-                    {plan.period}
-                  </span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
-                      <Check className={`w-5 h-5 ${plan.popular ? 'text-blue-200' : 'text-green-500'}`} />
-                      <span className={plan.popular ? 'text-blue-50' : 'text-neutral-600 dark:text-neutral-400'}>
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/signup"
-                  className={`block w-full py-3 text-center font-medium rounded-xl transition-colors ${
-                    plan.popular
-                      ? 'bg-white text-blue-600 hover:bg-blue-50'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 bg-neutral-50 dark:bg-neutral-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-neutral-900 dark:text-white mb-4">
-              O que nossos clientes dizem
-            </h2>
-            <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-              Milhares de profissionais ja confiam no Termyx
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
-              <div
-                key={testimonial.name}
-                className="bg-white dark:bg-neutral-800 rounded-2xl p-6 border border-neutral-200 dark:border-neutral-700"
-              >
-                <p className="text-neutral-600 dark:text-neutral-400 mb-6">
-                  &quot;{testimonial.content}&quot;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <p className="font-medium text-neutral-900 dark:text-white">
-                      {testimonial.name}
-                    </p>
-                    <p className="text-sm text-neutral-500">
-                      {testimonial.role}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-neutral-900 dark:text-white mb-4">
-            Pronto para comecar?
-          </h2>
-          <p className="text-neutral-600 dark:text-neutral-400 mb-8">
-            Crie sua conta gratuitamente e gere seu primeiro documento em minutos
-          </p>
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded-xl transition-colors"
+          {/* Mobile Menu Button */}
+          <motion.button
+            className="md:hidden p-2.5 rounded-xl bg-white/60 dark:bg-neutral-800/60 backdrop-blur-sm border border-white/30 dark:border-neutral-700/30"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            whileTap={{ scale: 0.95 }}
           >
-            Criar conta gratuita
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+            ) : (
+              <Menu className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+            )}
+          </motion.button>
+        </nav>
+
+        {/* Mobile Menu */}
+        <motion.div
+          className={`md:hidden bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl border-b border-white/20 dark:border-neutral-800/20 ${
+            mobileMenuOpen ? 'block' : 'hidden'
+          }`}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: mobileMenuOpen ? 1 : 0, height: mobileMenuOpen ? 'auto' : 0 }}
+        >
+          <div className="px-6 py-6 space-y-4">
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="block py-2 text-neutral-700 dark:text-neutral-300 font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </a>
+            ))}
+            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 space-y-3">
+              <Link href="/login" className="block">
+                <button className="w-full py-3 text-neutral-700 dark:text-neutral-300 font-medium border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                  Entrar
+                </button>
+              </Link>
+              <Link href="/signup" className="block">
+                <button className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl">
+                  Cadastrar
+                </button>
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      </motion.header>
+      {/* ============================================================ */}
+      {/* HERO SECTION */}
+      {/* ============================================================ */}
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Mesh gradient background */}
+        <MeshGradient variant="hero" />
+
+        {/* Floating shapes */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"
+            animate={{ y: [0, -30, 0], x: [0, 20, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
+            animate={{ y: [0, 30, 0], x: [0, -20, 0] }}
+            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          />
+        </div>
+
+        {/* Content */}
+        <motion.div
+          className="relative z-10 max-w-7xl mx-auto px-6 text-center"
+          style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
+        >
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <FloatingBadge className="mb-8">
+              <Sparkles className="w-4 h-4 text-purple-500" />
+              <span>Novo: Templates de contratos atualizados para 2025</span>
+            </FloatingBadge>
+          </motion.div>
+
+          {/* Headline */}
+          <motion.h1
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            <span className="text-neutral-900 dark:text-white">Documentos</span>
+            <br />
+            <GradientText variant="primary" animate>
+              Profissionais
+            </GradientText>
+            <br />
+            <span className="text-neutral-900 dark:text-white">em Segundos</span>
+          </motion.h1>
+
+          {/* Subheadline */}
+          <motion.p
+            className="max-w-2xl mx-auto text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 mb-12 leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            Crie contratos, recibos e orcamentos com qualidade juridica.
+            <br className="hidden sm:block" />
+            Preencha, gere e envie — tudo em uma unica plataforma.
+          </motion.p>
+
+          {/* CTA Button */}
+          <motion.div
+            className="flex items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <Link href="/signup">
+              <PremiumButton variant="primary" size="xl" glow>
+                Comecar Gratis
+                <ArrowRight className="w-5 h-5" />
+              </PremiumButton>
+            </Link>
+          </motion.div>
+
+          {/* Trust badges */}
+          <motion.div
+            className="mt-16 flex flex-wrap items-center justify-center gap-8 text-neutral-500"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+          >
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-green-500" />
+              <span className="text-sm">SSL Seguro</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-blue-500" />
+              <span className="text-sm">+15.000 usuarios</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-purple-500" />
+              <span className="text-sm">99.9% uptime</span>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 10, 0] }}
+          transition={{ opacity: { delay: 1.5 }, y: { duration: 2, repeat: Infinity } }}
+        >
+          <div className="w-8 h-12 rounded-full border-2 border-neutral-300 dark:border-neutral-700 flex justify-center pt-2">
+            <motion.div
+              className="w-1.5 h-3 bg-neutral-400 rounded-full"
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* STATS SECTION */}
+      {/* ============================================================ */}
+      <section className="relative py-24 bg-white dark:bg-neutral-900">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <StatCounter {...stat} />
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-neutral-200 dark:border-neutral-800">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">T</span>
-              </div>
-              <span className="text-xl font-bold text-neutral-900 dark:text-white">Termyx</span>
+      {/* ============================================================ */}
+      {/* FEATURES SECTION */}
+      {/* ============================================================ */}
+      <section id="recursos" className="relative py-32 overflow-hidden">
+        <MeshGradient variant="section" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
+          {/* Section header */}
+          <motion.div
+            className="text-center mb-20"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <motion.div
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400 text-sm font-medium mb-6"
+              whileHover={{ scale: 1.05 }}
+            >
+              <Sparkles className="w-4 h-4" />
+              Por que escolher Termyx
+            </motion.div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 dark:text-white mb-6">
+              Recursos que fazem
+              <br />
+              <GradientText variant="primary">a diferenca</GradientText>
+            </h2>
+            <p className="max-w-2xl mx-auto text-lg text-neutral-600 dark:text-neutral-400">
+              Desenvolvido para profissionais que valorizam qualidade, velocidade e seguranca.
+            </p>
+          </motion.div>
+
+          {/* Features grid */}
+          <div className="grid md:grid-cols-2 gap-8">
+            {features.map((feature, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: feature.delay }}
+              >
+                <FloatingCard className="p-8 h-full" glowColor={feature.gradient.includes('blue') ? 'blue' : feature.gradient.includes('purple') ? 'purple' : feature.gradient.includes('emerald') ? 'green' : 'orange'}>
+                  <FeatureIcon icon={feature.icon} gradient={feature.gradient} className="mb-6" />
+                  <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                    {feature.description}
+                  </p>
+                </FloatingCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* HOW IT WORKS SECTION */}
+      {/* ============================================================ */}
+      <section className="relative py-32 bg-white dark:bg-neutral-900">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Section header */}
+          <motion.div
+            className="text-center mb-20"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 dark:text-white mb-6">
+              Simples como
+              <br />
+              <GradientText variant="secondary">1, 2, 3</GradientText>
+            </h2>
+            <p className="max-w-2xl mx-auto text-lg text-neutral-600 dark:text-neutral-400">
+              Processo otimizado para maxima produtividade. Seu documento pronto em menos de um minuto.
+            </p>
+          </motion.div>
+
+          {/* Steps */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { step: '01', title: 'Escolha o Template', description: 'Navegue pela biblioteca e selecione o modelo ideal para sua necessidade.' },
+              { step: '02', title: 'Preencha os Dados', description: 'Complete os campos do formulario inteligente. Preview em tempo real.' },
+              { step: '03', title: 'Gere e Envie', description: 'Baixe o PDF profissional ou envie diretamente por email ou WhatsApp.' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                className="relative"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+              >
+                <AnimatedBorder>
+                  <div className="p-8 text-center">
+                    <div className="text-7xl font-bold bg-gradient-to-r from-blue-600/20 to-purple-600/20 bg-clip-text text-transparent mb-4">
+                      {item.step}
+                    </div>
+                    <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-3">
+                      {item.title}
+                    </h3>
+                    <p className="text-neutral-600 dark:text-neutral-400">
+                      {item.description}
+                    </p>
+                  </div>
+                </AnimatedBorder>
+
+                {/* Connector line */}
+                {i < 2 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 border-t-2 border-dashed border-neutral-300 dark:border-neutral-700" />
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* TESTIMONIALS SECTION */}
+      {/* ============================================================ */}
+      <section id="depoimentos" className="relative py-32 overflow-hidden">
+        <MeshGradient variant="section" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
+          {/* Section header */}
+          <motion.div
+            className="text-center mb-20"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 dark:text-white mb-6">
+              Amado por
+              <br />
+              <GradientText variant="accent">milhares</GradientText>
+            </h2>
+            <p className="max-w-2xl mx-auto text-lg text-neutral-600 dark:text-neutral-400">
+              Veja o que nossos clientes dizem sobre a experiencia com Termyx.
+            </p>
+          </motion.div>
+
+          {/* Testimonials grid */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <TestimonialCard {...testimonial} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* PRICING SECTION */}
+      {/* ============================================================ */}
+      <section id="planos" className="relative py-32 bg-white dark:bg-neutral-900">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Section header */}
+          <motion.div
+            className="text-center mb-20"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 dark:text-white mb-6">
+              Planos para
+              <br />
+              <GradientText variant="primary">cada necessidade</GradientText>
+            </h2>
+            <p className="max-w-2xl mx-auto text-lg text-neutral-600 dark:text-neutral-400">
+              Comece gratis e escale conforme seu negocio cresce. Sem surpresas.
+            </p>
+          </motion.div>
+
+          {/* Pricing cards */}
+          <div className="grid md:grid-cols-3 gap-8 items-center">
+            {plans.map((plan, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <PricingCard {...plan} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* CTA SECTION */}
+      {/* ============================================================ */}
+      <section className="relative py-32 overflow-hidden">
+        <MeshGradient variant="hero" />
+
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 dark:text-white mb-8">
+              Pronto para
+              <br />
+              <GradientText variant="primary" animate>
+                transformar seu trabalho?
+              </GradientText>
+            </h2>
+            <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-12 max-w-2xl mx-auto">
+              Junte-se a milhares de profissionais que ja economizam horas por semana com o Termyx.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/signup">
+                <PremiumButton variant="primary" size="xl" glow>
+                  Criar Conta Gratis
+                  <ArrowRight className="w-5 h-5" />
+                </PremiumButton>
+              </Link>
+              <Link href="/login">
+                <PremiumButton variant="ghost" size="xl">
+                  Ja tenho conta
+                </PremiumButton>
+              </Link>
             </div>
-            <nav className="flex items-center gap-6 text-sm text-neutral-500">
-              <Link href="/terms" className="hover:text-neutral-900 dark:hover:text-white transition-colors">Termos</Link>
-              <Link href="/privacy" className="hover:text-neutral-900 dark:hover:text-white transition-colors">Privacidade</Link>
-              <Link href="/help" className="hover:text-neutral-900 dark:hover:text-white transition-colors">Ajuda</Link>
-            </nav>
-            <p className="text-sm text-neutral-500">
-              2025 Termyx. Todos os direitos reservados.
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* FOOTER */}
+      {/* ============================================================ */}
+      <footer className="relative py-16 bg-neutral-900 dark:bg-black border-t border-neutral-800">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-4 gap-12">
+            {/* Brand */}
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">T</span>
+                </div>
+                <span className="text-2xl font-bold text-white">Termyx</span>
+              </div>
+              <p className="text-neutral-400 max-w-sm mb-6">
+                A plataforma mais avancada para geracao de documentos profissionais. Simples, rapido e seguro.
+              </p>
+              <div className="flex gap-4">
+                {['twitter', 'linkedin', 'instagram'].map((social) => (
+                  <motion.a
+                    key={social}
+                    href="#"
+                    className="w-10 h-10 bg-neutral-800 hover:bg-neutral-700 rounded-xl flex items-center justify-center transition-colors"
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <span className="text-neutral-400 text-sm capitalize">{social[0].toUpperCase()}</span>
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+
+            {/* Links */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">Produto</h4>
+              <ul className="space-y-3">
+                {['Templates', 'Precos', 'API', 'Integrações'].map((item) => (
+                  <li key={item}>
+                    <a href="#" className="text-neutral-400 hover:text-white transition-colors">
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-4">Legal</h4>
+              <ul className="space-y-3">
+                {[
+                  { label: 'Termos de Uso', href: '/terms' },
+                  { label: 'Privacidade', href: '/privacy' },
+                  { label: 'LGPD', href: '/privacy' },
+                ].map((item) => (
+                  <li key={item.label}>
+                    <Link href={item.href} className="text-neutral-400 hover:text-white transition-colors">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-16 pt-8 border-t border-neutral-800 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-neutral-500 text-sm">
+              © 2025 Termyx. Todos os direitos reservados.
+            </p>
+            <p className="text-neutral-500 text-sm flex items-center gap-2">
+              Feito com <span className="text-red-500">❤</span> no Brasil
             </p>
           </div>
         </div>

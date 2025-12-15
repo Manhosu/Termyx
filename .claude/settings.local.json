@@ -27,7 +27,10 @@
       "Bash(npm run dev:*)",
       "Bash(if not exist \"c:\\Users\\delas\\OneDrive\\Documentos\\Projetos\\Termyx\\src\\app\\share\\[token]\" mkdir \"c:\\Users\\delas\\OneDrive\\Documentos\\Projetos\\Termyx\\src\\app\\share\\[token]\")",
       "Bash(if not exist \"c:\\Users\\delas\\OneDrive\\Documentos\\Projetos\\Termyx\\src\\app\\(auth)\\reset-password\" mkdir \"c:\\Users\\delas\\OneDrive\\Documentos\\Projetos\\Termyx\\src\\app\\(auth)\\reset-password\")",
-      "Bash(if exist \".next\" rmdir /s /q \".next\")"
+      "Bash(if exist \".next\" rmdir /s /q \".next\")",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(timeout /t 5 /nobreak)"
     ],
     "deny": [],
     "ask": []

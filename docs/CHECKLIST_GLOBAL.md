@@ -78,6 +78,8 @@
 - [x] API de creditos do usuario (/api/user/credits) - saldo e historico
 - [x] API de gerenciamento de compartilhamentos (/api/documents/shares)
 - [x] API de estatisticas admin (/api/admin/stats)
+- [x] API de notificacoes (/api/notifications) - GET, PATCH, DELETE
+- [x] API de clone de templates (/api/templates/clone)
 - [x] Biblioteca de templates com filtro por categoria
 - [x] Editor de documento com preview em tempo real
 - [x] Historico de documentos com busca e filtros
@@ -184,10 +186,13 @@ Etapa 9 (Admin) --> Etapa 10 (Deploy)
   - 004_add_favorite_templates.sql (favorite_templates, deleted_at, avatars bucket)
   - 005_add_archived_at.sql (archived_at para documentos)
   - 006_add_credits_and_shares.sql (credit_transactions, document_shares)
+  - 007_add_notifications.sql (notifications, templates.cloned_from)
 
 ### Decisoes Tecnicas
 - Frontend: Next.js 15.4.9 com App Router
-- Estilizacao: Tailwind CSS 4 + CSS Transitions (sem Framer Motion)
+- Estilizacao: Tailwind CSS 4 + Framer Motion
+- Animacoes: Framer Motion (scroll-driven, parallax, stagger)
+- UI Design: Liquid Glass (iOS 26-inspired, glassmorphism)
 - Backend: API Routes do Next.js (inicialmente)
 - BaaS: Supabase (Auth, DB, Storage)
 - PDF: Puppeteer em container separado
@@ -195,7 +200,7 @@ Etapa 9 (Admin) --> Etapa 10 (Deploy)
 
 ### Problemas Conhecidos
 - ~~Build de producao com erro em paginas de erro (404/500)~~ - **RESOLVIDO**
-- Build de producao funcionando corretamente (47 paginas/rotas geradas)
+- Build de producao funcionando corretamente (49 paginas/rotas geradas)
 - **MVP 100% COMPLETO** - Pronto para deploy na Vercel
 - Migrations pendentes devem ser executadas manualmente no Supabase SQL Editor
 
@@ -267,3 +272,42 @@ Etapa 9 (Admin) --> Etapa 10 (Deploy)
 - Sentry temporariamente desabilitado devido a incompatibilidade com Next.js 15
 - Reinstalar apos Sentry lancar versao compativel: `npm install @sentry/nextjs`
 - Configuracao preservada nos arquivos de documentacao
+
+### UI/UX Moderna (Dezembro 2025)
+
+#### Framer Motion - Animacoes
+- **Componentes de animacao** (`src/components/ui/motion.tsx`):
+  - `ScrollAnimation` - Animacao ao entrar na viewport (scroll-driven)
+  - `StaggerContainer` / `StaggerItem` - Animacoes em cascata para listas
+  - `HoverScale` - Efeito de escala ao hover com spring physics
+  - `ParallaxSection` - Efeito parallax no scroll
+  - Variantes exportadas: `fadeInUp`, `fadeInDown`, `fadeInLeft`, `fadeInRight`, `scaleUp`, `staggerContainer`, `scrollFadeIn`
+
+#### Liquid Glass Design (iOS 26-inspired)
+- **Componentes glassmorphism** (`src/components/ui/liquid-glass.tsx`):
+  - `LiquidGlassCard` - Card com backdrop-blur, gradientes e bordas translucidas
+  - `LiquidGlassButton` - Botao com efeitos de vidro e micro-interacoes
+  - `LiquidGlassInput` - Input com fundo desfocado e focus states fluidos
+  - Suporte completo a dark/light mode com transicoes suaves
+
+#### Dashboard Moderno
+- **Layout com blobs animados** - Background gradiente com movimento sutil
+- **Sidebar Liquid Glass** - Navegacao com backdrop-blur e indicador ativo animado
+- **Header responsivo** - Busca com micro-animacoes e toggle de tema animado
+- **Cards estatisticos** - Gradientes, icones com glow, tendencias animadas
+- **Animacoes de entrada** - Stagger containers para documentos e templates
+
+#### Landing Page Premium
+- **Hero com parallax** - Movimento suave no scroll
+- **Features com scroll-driven animations** - Aparicao gradual dos cards
+- **Gradientes animados** - Blobs de background com movimento organico
+- **CTAs com hover effects** - Botoes com scale e shadow transitions
+- **Testimonials** - Cards com estrelas e animacoes hover
+
+#### Transicoes de Tema
+- **Theme Provider** (`src/components/providers/theme-provider.tsx`)
+- **CSS global** (`src/app/globals.css`):
+  - `.theme-transition` - Classe para suavizar mudanca dark/light
+  - Custom scrollbar styling
+  - Utilidades: `.glass`, `.gradient-text`, `.animate-float`, `.animate-pulse-glow`, `.animate-shimmer`
+  - Focus ring e selection styling consistentes
