@@ -74,8 +74,8 @@ export default async function AdminPaymentsPage() {
 
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-emerald-600" />
             </div>
             <span className="text-sm text-neutral-500">Pagamentos Pagos</span>
           </div>
@@ -98,8 +98,8 @@ export default async function AdminPaymentsPage() {
 
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-teal-600" />
             </div>
             <span className="text-sm text-neutral-500">Ticket Medio</span>
           </div>
@@ -116,17 +116,17 @@ export default async function AdminPaymentsPage() {
           <input
             type="text"
             placeholder="Buscar por usuario ou ID..."
-            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>
-        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
           <option value="">Todos os status</option>
           <option value="paid">Pago</option>
           <option value="pending">Pendente</option>
           <option value="failed">Falhou</option>
           <option value="refunded">Reembolsado</option>
         </select>
-        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
           <option value="">Todos os tipos</option>
           <option value="subscription">Assinatura</option>
           <option value="credits">Creditos</option>

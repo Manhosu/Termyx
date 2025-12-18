@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
@@ -11,7 +12,6 @@ import {
   Settings,
   HelpCircle,
   LogOut,
-  Sparkles,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -68,23 +68,20 @@ export function Sidebar() {
         className="h-16 flex items-center px-6 border-b border-white/30 dark:border-neutral-800/30"
         variants={itemVariants}
       >
-        <Link href="/dashboard" className="flex items-center gap-3 group">
+        <Link href="/dashboard" className="flex items-center group">
           <motion.div
-            className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25"
-            whileHover={{ scale: 1.05, rotate: 5 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <span className="text-white font-bold text-xl">T</span>
+            <Image
+              src="/logo.png"
+              alt="Termyx"
+              width={130}
+              height={35}
+              className="h-9 w-auto"
+              priority
+            />
           </motion.div>
-          <div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Termyx
-            </span>
-            <div className="flex items-center gap-1 text-xs text-neutral-500">
-              <Sparkles className="w-3 h-3" />
-              <span>Pro</span>
-            </div>
-          </div>
         </Link>
       </motion.div>
 
@@ -122,7 +119,7 @@ export function Sidebar() {
       </div>
 
       {/* Decorative gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none rounded-r-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-transparent to-teal-500/5 pointer-events-none rounded-r-3xl" />
     </motion.aside>
   )
 }
@@ -140,7 +137,7 @@ function NavItem({ href, label, icon: Icon, isActive }: NavItemProps) {
       <motion.div
         className={`relative flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 overflow-hidden ${
           isActive
-            ? 'text-blue-600 dark:text-blue-400 bg-blue-100/80 dark:bg-blue-900/40 shadow-lg shadow-blue-500/10'
+            ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-100/80 dark:bg-emerald-900/40 shadow-lg shadow-emerald-500/10'
             : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-neutral-800/60'
         }`}
         whileHover={{ x: 4, scale: 1.02 }}
@@ -149,7 +146,7 @@ function NavItem({ href, label, icon: Icon, isActive }: NavItemProps) {
         {/* Active Indicator */}
         {isActive && (
           <motion.div
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-r-full"
             layoutId="activeIndicator"
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           />
@@ -159,7 +156,7 @@ function NavItem({ href, label, icon: Icon, isActive }: NavItemProps) {
         <div className="relative">
           <Icon className="w-5 h-5 relative z-10" />
           {isActive && (
-            <div className="absolute inset-0 bg-blue-500/30 blur-lg" />
+            <div className="absolute inset-0 bg-emerald-500/30 blur-lg" />
           )}
         </div>
 

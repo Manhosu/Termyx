@@ -129,7 +129,7 @@ export default function BuyCreditsModal({ isOpen, onClose }: BuyCreditsModalProp
                 disabled={loading}
                 className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
                   selectedPackage === pkg.id
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
                     : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
                 } disabled:opacity-50`}
               >
@@ -137,7 +137,7 @@ export default function BuyCreditsModal({ isOpen, onClose }: BuyCreditsModalProp
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                       selectedPackage === pkg.id
-                        ? 'bg-blue-500 text-white'
+                        ? 'bg-emerald-500 text-white'
                         : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500'
                     }`}>
                       <Sparkles className="w-5 h-5" />
@@ -148,7 +148,7 @@ export default function BuyCreditsModal({ isOpen, onClose }: BuyCreditsModalProp
                           {pkg.name}
                         </span>
                         {pkg.popular && (
-                          <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 text-xs font-medium rounded-full">
                             Popular
                           </span>
                         )}
@@ -165,7 +165,7 @@ export default function BuyCreditsModal({ isOpen, onClose }: BuyCreditsModalProp
                       {pkg.priceDisplay}
                     </span>
                     {selectedPackage === pkg.id && (
-                      <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
                     )}
@@ -186,7 +186,7 @@ export default function BuyCreditsModal({ isOpen, onClose }: BuyCreditsModalProp
           <button
             onClick={handlePurchase}
             disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <>

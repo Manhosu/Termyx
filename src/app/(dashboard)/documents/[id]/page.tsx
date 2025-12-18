@@ -38,7 +38,7 @@ interface DocumentSend {
 const statusConfig = {
   draft: { label: 'Rascunho', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' },
   generated: { label: 'Gerado', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-  sent: { label: 'Enviado', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+  sent: { label: 'Enviado', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' },
   archived: { label: 'Arquivado', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400' }
 }
 
@@ -167,7 +167,7 @@ export default function DocumentDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
       </div>
     )
   }
@@ -212,7 +212,7 @@ export default function DocumentDetailPage() {
           {document.pdf_path && (
             <button
               onClick={handleDownload}
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors"
             >
               <Download className="w-4 h-4" />
               Download
@@ -333,7 +333,7 @@ export default function DocumentDetailPage() {
                 {sends.map((send) => (
                   <div key={send.id} className="flex items-center gap-3 text-sm">
                     {send.channel === 'email' ? (
-                      <Mail className="w-4 h-4 text-blue-500" />
+                      <Mail className="w-4 h-4 text-emerald-500" />
                     ) : (
                       <MessageCircle className="w-4 h-4 text-green-500" />
                     )}
@@ -378,7 +378,7 @@ export default function DocumentDetailPage() {
               />
               <button
                 onClick={copyShareLink}
-                className="px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                className="px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors"
               >
                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
               </button>
@@ -512,7 +512,7 @@ function SendModal({ documentId, onClose, onSent }: SendModalProps) {
             onClick={() => setChannel('email')}
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-colors ${
               channel === 'email'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-emerald-600 text-white'
                 : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
             }`}
           >
@@ -538,7 +538,7 @@ function SendModal({ documentId, onClose, onSent }: SendModalProps) {
           placeholder={channel === 'email' ? 'email@exemplo.com' : '(11) 99999-9999'}
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
-          className="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl text-neutral-900 dark:text-white mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl text-neutral-900 dark:text-white mb-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
 
         {/* Recipient Name (optional) */}
@@ -547,7 +547,7 @@ function SendModal({ documentId, onClose, onSent }: SendModalProps) {
           placeholder="Nome do destinatario (opcional)"
           value={recipientName}
           onChange={(e) => setRecipientName(e.target.value)}
-          className="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl text-neutral-900 dark:text-white mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl text-neutral-900 dark:text-white mb-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
 
         {/* Message (optional) */}
@@ -556,7 +556,7 @@ function SendModal({ documentId, onClose, onSent }: SendModalProps) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           rows={3}
-          className="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl text-neutral-900 dark:text-white mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          className="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl text-neutral-900 dark:text-white mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
         />
 
         {/* Info */}
@@ -578,7 +578,7 @@ function SendModal({ documentId, onClose, onSent }: SendModalProps) {
           <button
             onClick={handleSend}
             disabled={!recipient || sending}
-            className="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex-1 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
             Enviar

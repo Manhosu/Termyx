@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { LayoutDashboard, Users, FileText, Settings, ArrowLeft, CreditCard, Activity } from 'lucide-react'
 
 // Force dynamic rendering for admin pages
@@ -47,13 +48,16 @@ export default async function AdminLayout({
           {/* Logo */}
           <div className="p-6 border-b border-neutral-200 dark:border-neutral-800">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">T</span>
-              </div>
-              <div>
-                <h1 className="font-bold text-neutral-900 dark:text-white">Termyx</h1>
-                <p className="text-xs text-red-600 font-medium">Admin Panel</p>
-              </div>
+              <Image
+                src="/logo.png"
+                alt="Termyx"
+                width={120}
+                height={32}
+                className="h-8 w-auto"
+              />
+              <span className="text-xs text-red-600 font-semibold px-2 py-1 bg-red-50 dark:bg-red-900/20 rounded-md">
+                Admin
+              </span>
             </div>
           </div>
 

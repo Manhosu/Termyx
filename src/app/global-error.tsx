@@ -45,7 +45,7 @@ export default function GlobalError({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               onClick={reset}
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 transition-colors"
             >
               <RefreshCw className="w-5 h-5" />
               Tentar novamente
@@ -63,7 +63,7 @@ export default function GlobalError({
           {/* Support Link */}
           <p className="mt-8 text-sm text-neutral-500">
             Se o problema persistir,{' '}
-            <a href="mailto:suporte@termyx.com.br" className="text-blue-600 hover:underline">
+            <a href="mailto:suporte@termyx.com.br" className="text-emerald-600 hover:underline">
               entre em contato com o suporte
             </a>
           </p>

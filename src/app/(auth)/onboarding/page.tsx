@@ -66,7 +66,16 @@ export default function OnboardingPage() {
         }).catch((err) => console.error('Welcome email error:', err))
       }
 
-      router.push('/dashboard')
+      // Check if email is confirmed
+      const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+      if (currentUser?.email_confirmed_at) {
+        // Email already confirmed, go to dashboard
+        router.push('/dashboard')
+      } else {
+        // Email not confirmed, go to verification page
+        router.push('/verify-email')
+      }
       router.refresh()
     } catch (error) {
       console.error('Onboarding error:', error)
@@ -101,7 +110,7 @@ export default function OnboardingPage() {
                 className={`
                   p-6 rounded-2xl border-2 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]
                   ${isSelected
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
                     : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-700'
                   }
                 `}
@@ -110,14 +119,14 @@ export default function OnboardingPage() {
                   <div className={`
                     p-3 rounded-xl
                     ${isSelected
-                      ? 'bg-blue-500 text-white'
+                      ? 'bg-emerald-500 text-white'
                       : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
                     }
                   `}>
                     <Icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className={`font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-neutral-900 dark:text-white'}`}>
+                    <h3 className={`font-semibold ${isSelected ? 'text-emerald-700 dark:text-emerald-300' : 'text-neutral-900 dark:text-white'}`}>
                       {category.label}
                     </h3>
                     <p className="text-sm text-neutral-500 mt-1">
@@ -144,7 +153,7 @@ export default function OnboardingPage() {
               type="text"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
               placeholder="Ex: Studio Design, Joao Servicos..."
             />
           </div>
@@ -154,7 +163,7 @@ export default function OnboardingPage() {
         <button
           onClick={handleContinue}
           disabled={!selected || loading}
-          className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-300 dark:disabled:bg-neutral-700 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+          className="w-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 disabled:bg-neutral-300 dark:disabled:bg-neutral-700 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
         >
           {loading ? (
             <>

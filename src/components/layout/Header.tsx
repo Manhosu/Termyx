@@ -67,7 +67,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         transition={{ duration: 0.2 }}
       >
         <div className="relative">
-          <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${searchFocused ? 'text-blue-500' : 'text-neutral-400'}`} />
+          <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${searchFocused ? 'text-emerald-500' : 'text-neutral-400'}`} />
           <input
             type="search"
             placeholder="Buscar documentos..."
@@ -76,7 +76,7 @@ export function Header({ onMenuClick }: HeaderProps) {
             onChange={(e) => setSearchValue(e.target.value)}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
-            className="w-full pl-11 pr-10 py-2.5 bg-white/60 dark:bg-neutral-800/60 border border-white/50 dark:border-neutral-700/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 focus:bg-white dark:focus:bg-neutral-800 placeholder:text-neutral-400 text-sm transition-all shadow-sm backdrop-blur-sm"
+            className="w-full pl-11 pr-10 py-2.5 bg-white/60 dark:bg-neutral-800/60 border border-white/50 dark:border-neutral-700/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/50 focus:bg-white dark:focus:bg-neutral-800 placeholder:text-neutral-400 text-sm transition-all shadow-sm backdrop-blur-sm"
           />
           <AnimatePresence>
             {searchValue && (
@@ -169,7 +169,7 @@ export function Header({ onMenuClick }: HeaderProps) {
             </p>
           </div>
           <motion.div
-            className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20 cursor-pointer"
+            className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 cursor-pointer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

@@ -194,7 +194,7 @@ export default function NewDocumentPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
       </div>
     )
   }
@@ -213,7 +213,7 @@ export default function NewDocumentPage() {
         </p>
         <Link
           href="/templates"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar para Templates
@@ -267,7 +267,7 @@ export default function NewDocumentPage() {
           <button
             onClick={handleGeneratePDF}
             disabled={generating}
-            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
           >
             {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             <span className="hidden sm:inline">Gerar PDF</span>
@@ -378,7 +378,7 @@ interface FormFieldProps {
 }
 
 function FormField({ placeholder, value, onChange }: FormFieldProps) {
-  const baseInputClass = "w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-neutral-900 dark:text-white placeholder:text-neutral-400 text-sm"
+  const baseInputClass = "w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-neutral-900 dark:text-white placeholder:text-neutral-400 text-sm"
 
   const formatCurrency = (val: string) => {
     const num = val.replace(/\D/g, '')

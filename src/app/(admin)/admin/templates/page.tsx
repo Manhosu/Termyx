@@ -11,9 +11,9 @@ const categoryLabels: Record<string, string> = {
 }
 
 const categoryColors: Record<string, string> = {
-  contrato: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  contrato: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
   recibo: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-  orcamento: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+  orcamento: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
   termo: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
   outro: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400',
 }
@@ -60,7 +60,7 @@ export default async function AdminTemplatesPage() {
         </div>
         <Link
           href="/admin/templates/new"
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors"
         >
           <Plus className="w-5 h-5" />
           Novo Template
@@ -74,10 +74,10 @@ export default async function AdminTemplatesPage() {
           <input
             type="text"
             placeholder="Buscar templates..."
-            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>
-        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
           <option value="">Todas as categorias</option>
           <option value="contrato">Contrato</option>
           <option value="recibo">Recibo</option>
@@ -85,7 +85,7 @@ export default async function AdminTemplatesPage() {
           <option value="termo">Termo</option>
           <option value="outro">Outro</option>
         </select>
-        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
           <option value="">Visibilidade</option>
           <option value="public">Publico</option>
           <option value="private">Privado</option>
@@ -101,7 +101,7 @@ export default async function AdminTemplatesPage() {
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -153,13 +153,13 @@ export default async function AdminTemplatesPage() {
                     Por {template.owner.name || template.owner.email}
                   </span>
                 ) : (
-                  <span className="text-blue-600 font-medium">Sistema</span>
+                  <span className="text-emerald-600 font-medium">Sistema</span>
                 )}
               </div>
               <div className="flex items-center gap-2">
                 <Link
                   href={`/admin/templates/${template.id}`}
-                  className="p-2 text-neutral-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                  className="p-2 text-neutral-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors"
                 >
                   <Pencil className="w-4 h-4" />
                 </Link>
@@ -186,7 +186,7 @@ export default async function AdminTemplatesPage() {
           </p>
           <Link
             href="/admin/templates/new"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors"
           >
             <Plus className="w-5 h-5" />
             Criar Template

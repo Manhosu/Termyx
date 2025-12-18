@@ -47,7 +47,7 @@ export function UpgradeButton({
     <button
       onClick={handleUpgrade}
       disabled={loading}
-      className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+      className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
     >
       {loading ? (
         <Loader2 className="w-4 h-4 animate-spin" />
@@ -109,7 +109,7 @@ export function BuyCreditsButton() {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="px-6 py-3 bg-white text-blue-600 font-medium rounded-xl hover:bg-blue-50 transition-colors flex items-center gap-2"
+        className="px-6 py-3 bg-white text-emerald-600 font-medium rounded-xl hover:bg-emerald-50 transition-colors flex items-center gap-2"
       >
         <CreditCard className="w-5 h-5" />
         Comprar creditos
@@ -132,7 +132,7 @@ export default function BillingActions({ hasSubscription }: BillingActionsProps)
         {hasSubscription && <ManageSubscriptionButton />}
         <button
           onClick={() => setShowCreditsModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors"
         >
           <CreditCard className="w-4 h-4" />
           Comprar Creditos

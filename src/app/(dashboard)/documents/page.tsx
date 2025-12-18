@@ -24,7 +24,7 @@ interface Document {
 const statusConfig = {
   draft: { label: 'Rascunho', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' },
   generated: { label: 'Gerado', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-  sent: { label: 'Enviado', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+  sent: { label: 'Enviado', color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' },
   archived: { label: 'Arquivado', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400' }
 }
 
@@ -100,7 +100,7 @@ export default function DocumentsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
       </div>
     )
   }
@@ -120,7 +120,7 @@ export default function DocumentsPage() {
 
         <Link
           href="/templates"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium"
         >
           <Plus className="w-5 h-5" />
           Novo Documento
@@ -136,7 +136,7 @@ export default function DocumentsPage() {
             placeholder="Buscar documentos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-neutral-900 dark:text-white"
+            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-neutral-900 dark:text-white"
           />
         </div>
 
@@ -145,7 +145,7 @@ export default function DocumentsPage() {
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-colors ${
               statusFilter !== 'all'
-                ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-400'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-400'
                 : 'bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300'
             }`}
           >
@@ -163,7 +163,7 @@ export default function DocumentsPage() {
                     setShowFilters(false)
                   }}
                   className={`w-full px-4 py-2.5 text-left text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors ${
-                    statusFilter === status ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300'
+                    statusFilter === status ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'text-neutral-700 dark:text-neutral-300'
                   }`}
                 >
                   {status === 'all' ? 'Todos' : statusConfig[status as keyof typeof statusConfig].label}
@@ -191,7 +191,7 @@ export default function DocumentsPage() {
           {!searchTerm && statusFilter === 'all' && (
             <Link
               href="/templates"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors"
             >
               <Plus className="w-4 h-4" />
               Criar Documento
@@ -207,8 +207,8 @@ export default function DocumentsPage() {
             >
               <div className="flex items-center gap-4">
                 {/* Icon */}
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                 </div>
 
                 {/* Info */}

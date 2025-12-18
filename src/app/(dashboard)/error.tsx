@@ -45,7 +45,7 @@ export default function DashboardError({
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
           <button
             onClick={reset}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 transition-colors"
           >
             <RefreshCw className="w-5 h-5" />
             Tentar novamente
@@ -71,7 +71,7 @@ export default function DashboardError({
         {/* Help Link */}
         <p className="mt-8 text-sm text-neutral-500">
           Se o problema persistir,{' '}
-          <Link href="/help" className="text-blue-600 hover:underline">
+          <Link href="/help" className="text-emerald-600 hover:underline">
             acesse nossa central de ajuda
           </Link>
         </p>

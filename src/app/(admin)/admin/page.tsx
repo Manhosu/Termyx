@@ -59,14 +59,14 @@ export default async function AdminDashboard() {
       value: totalUsers || 0,
       change: newUsersThisMonth || 0,
       icon: Users,
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-emerald-500 to-emerald-600',
     },
     {
       title: 'Documentos Gerados',
       value: totalDocuments || 0,
       change: documentsThisMonth || 0,
       icon: FileText,
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-teal-500 to-teal-600',
     },
     {
       title: 'Receita do Mes',
@@ -135,7 +135,7 @@ export default async function AdminDashboard() {
             {recentUsers?.map((user) => (
               <div key={user.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-medium">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-medium">
                     {(user.name || user.email)?.[0]?.toUpperCase() || '?'}
                   </div>
                   <div>
@@ -149,7 +149,7 @@ export default async function AdminDashboard() {
                   <p className="text-sm text-neutral-500">
                     {format(new Date(user.created_at), 'dd/MM/yyyy')}
                   </p>
-                  <p className="text-xs text-blue-600">
+                  <p className="text-xs text-emerald-600">
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {(user.plan as any)?.name || 'Free'}
                   </p>
@@ -173,8 +173,8 @@ export default async function AdminDashboard() {
             {recentDocuments?.map((doc) => (
               <div key={doc.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-purple-600" />
+                  <div className="w-10 h-10 rounded-xl bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-teal-600" />
                   </div>
                   <div>
                     <p className="font-medium text-neutral-900 dark:text-white truncate max-w-[200px]">
@@ -191,7 +191,7 @@ export default async function AdminDashboard() {
                     doc.status === 'generated'
                       ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                       : doc.status === 'sent'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                      ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400'
                       : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                   }`}>
                     {doc.status === 'generated' ? 'Gerado' :

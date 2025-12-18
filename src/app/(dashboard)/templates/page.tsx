@@ -57,7 +57,7 @@ export default async function TemplatesPage() {
           <input
             type="text"
             placeholder="Buscar templates..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
           />
         </div>
       </div>
@@ -126,9 +126,9 @@ interface TemplateCardProps {
 
 function TemplateCard({ template }: TemplateCardProps) {
   const categoryColors: Record<string, string> = {
-    contrato: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    contrato: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
     recibo: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-    orcamento: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+    orcamento: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
     termo: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
     outro: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400',
   }
@@ -136,15 +136,15 @@ function TemplateCard({ template }: TemplateCardProps) {
   return (
     <Link
       href={`/documents/new?template=${template.id}`}
-      className="group bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5 hover:border-blue-500 hover:shadow-lg transition-all"
+      className="group bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5 hover:border-emerald-500 hover:shadow-lg transition-all"
     >
       {/* Icon */}
-      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
+      <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mb-4">
         <FileText className="w-6 h-6 text-white" />
       </div>
 
       {/* Content */}
-      <h3 className="font-semibold text-neutral-900 dark:text-white group-hover:text-blue-600 transition-colors mb-2">
+      <h3 className="font-semibold text-neutral-900 dark:text-white group-hover:text-emerald-600 transition-colors mb-2">
         {template.name}
       </h3>
       <p className="text-sm text-neutral-500 line-clamp-2 mb-4">

@@ -8,7 +8,7 @@ export default function NotFound() {
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center p-4">
       <div className="text-center max-w-md">
         {/* Icon */}
-        <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
           <FileQuestion className="w-10 h-10 text-white" />
         </div>
 
@@ -29,7 +29,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             href="/"
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 transition-colors"
           >
             <Home className="w-5 h-5" />
             Ir para o inicio
@@ -46,7 +46,7 @@ export default function NotFound() {
         {/* Help Link */}
         <p className="mt-8 text-sm text-neutral-500">
           Precisa de ajuda?{' '}
-          <Link href="/help" className="text-blue-600 hover:underline">
+          <Link href="/help" className="text-emerald-600 hover:underline">
             Acesse nossa central de ajuda
           </Link>
         </p>

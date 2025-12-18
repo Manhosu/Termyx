@@ -80,7 +80,7 @@ export function DashboardClient({
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <Sparkles className="w-4 h-4 text-purple-500" />
+            <Sparkles className="w-4 h-4 text-emerald-500" />
             Bem-vindo ao seu painel de documentos
           </motion.p>
         </div>
@@ -90,7 +90,7 @@ export function DashboardClient({
         >
           <Link
             href="/templates"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-2xl transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium rounded-2xl transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40"
           >
             <Plus className="w-5 h-5" />
             Novo Documento
@@ -135,12 +135,12 @@ export function DashboardClient({
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-neutral-900 dark:text-white flex items-center gap-2">
-              <FileText className="w-5 h-5 text-blue-500" />
+              <FileText className="w-5 h-5 text-emerald-500" />
               Documentos Recentes
             </h2>
             <Link
               href="/documents"
-              className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1 group"
+              className="text-sm text-emerald-600 hover:text-emerald-700 flex items-center gap-1 group"
             >
               Ver todos
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -161,7 +161,7 @@ export function DashboardClient({
               action={
                 <Link
                   href="/templates"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-blue-500/20"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-emerald-500/20"
                 >
                   <Plus className="w-4 h-4" />
                   Criar Documento
@@ -177,7 +177,7 @@ export function DashboardClient({
           variants={itemVariants}
         >
           <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-6 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-500" />
+            <Sparkles className="w-5 h-5 text-emerald-500" />
             Templates Populares
           </h2>
 
@@ -195,7 +195,7 @@ export function DashboardClient({
 
           <Link
             href="/templates"
-            className="block text-center mt-4 py-3 text-sm text-blue-600 hover:text-blue-700 font-medium hover:bg-blue-50/50 dark:hover:bg-blue-900/20 rounded-xl transition-colors"
+            className="block text-center mt-4 py-3 text-sm text-emerald-600 hover:text-emerald-700 font-medium hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20 rounded-xl transition-colors"
           >
             Ver todos os templates
           </Link>
@@ -217,21 +217,21 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, color, isText, trend }: StatCardProps) {
   const gradients = {
-    blue: 'from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20',
+    blue: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20',
     green: 'from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20',
-    purple: 'from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20',
+    purple: 'from-teal-500/10 to-cyan-500/10 dark:from-teal-500/20 dark:to-cyan-500/20',
   }
 
   const iconColors = {
-    blue: 'text-blue-600 dark:text-blue-400',
+    blue: 'text-emerald-600 dark:text-emerald-400',
     green: 'text-green-600 dark:text-green-400',
-    purple: 'text-purple-600 dark:text-purple-400',
+    purple: 'text-teal-600 dark:text-teal-400',
   }
 
   const iconBg = {
-    blue: 'bg-blue-100 dark:bg-blue-900/40',
+    blue: 'bg-emerald-100 dark:bg-emerald-900/40',
     green: 'bg-green-100 dark:bg-green-900/40',
-    purple: 'bg-purple-100 dark:bg-purple-900/40',
+    purple: 'bg-teal-100 dark:bg-teal-900/40',
   }
 
   return (
@@ -265,8 +265,8 @@ function StatCard({ icon: Icon, label, value, color, isText, trend }: StatCardPr
 
       {/* Decorative gradient blob */}
       <div className={`absolute -bottom-8 -right-8 w-24 h-24 rounded-full blur-2xl opacity-40 ${
-        color === 'blue' ? 'bg-blue-400' :
-        color === 'green' ? 'bg-green-400' : 'bg-purple-400'
+        color === 'blue' ? 'bg-emerald-400' :
+        color === 'green' ? 'bg-green-400' : 'bg-teal-400'
       }`} />
     </motion.div>
   )
@@ -285,13 +285,13 @@ function DocumentCard({ doc, index }: { doc: RecentDocument; index: number }) {
       >
         <div className="flex items-center gap-4">
           <motion.div
-            className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 rounded-2xl flex items-center justify-center"
+            className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-2xl flex items-center justify-center"
             whileHover={{ rotate: 5 }}
           >
-            <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <FileText className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
           </motion.div>
           <div>
-            <p className="font-medium text-neutral-900 dark:text-white group-hover:text-blue-600 transition-colors">
+            <p className="font-medium text-neutral-900 dark:text-white group-hover:text-emerald-600 transition-colors">
               {doc.title}
             </p>
             <p className="text-sm text-neutral-500">
@@ -314,9 +314,9 @@ function TemplateCard({ template, index }: { template: Template; index: number }
     >
       <Link
         href={`/documents/new?template=${template.id}`}
-        className="block p-4 rounded-2xl border border-white/50 dark:border-neutral-700/50 hover:border-blue-500/50 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all group bg-white/40 dark:bg-neutral-800/40"
+        className="block p-4 rounded-2xl border border-white/50 dark:border-neutral-700/50 hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20 transition-all group bg-white/40 dark:bg-neutral-800/40"
       >
-        <p className="font-medium text-neutral-900 dark:text-white group-hover:text-blue-600 transition-colors">
+        <p className="font-medium text-neutral-900 dark:text-white group-hover:text-emerald-600 transition-colors">
           {template.name}
         </p>
         <p className="text-sm text-neutral-500 mt-1 line-clamp-2">
@@ -334,7 +334,7 @@ function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
     draft: 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-700 dark:from-yellow-900/40 dark:to-amber-900/40 dark:text-yellow-400',
     generated: 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 dark:from-green-900/40 dark:to-emerald-900/40 dark:text-green-400',
-    sent: 'bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 dark:from-blue-900/40 dark:to-cyan-900/40 dark:text-blue-400',
+    sent: 'bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 dark:from-teal-900/40 dark:to-cyan-900/40 dark:text-teal-400',
     archived: 'bg-gradient-to-r from-neutral-100 to-slate-100 text-neutral-600 dark:from-neutral-800 dark:to-slate-900 dark:text-neutral-400',
   }
 
@@ -367,11 +367,11 @@ function EmptyState({ icon: Icon, title, description, action }: EmptyStateProps)
       animate={{ opacity: 1, scale: 1 }}
     >
       <motion.div
-        className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 rounded-3xl flex items-center justify-center mx-auto mb-4"
+        className="w-20 h-20 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-3xl flex items-center justify-center mx-auto mb-4"
         animate={{ y: [0, -5, 0] }}
         transition={{ duration: 3, repeat: Infinity }}
       >
-        <Icon className="w-10 h-10 text-blue-500" />
+        <Icon className="w-10 h-10 text-emerald-500" />
       </motion.div>
       <h3 className="font-semibold text-neutral-900 dark:text-white mb-1">{title}</h3>
       <p className="text-sm text-neutral-500 mb-4">{description}</p>

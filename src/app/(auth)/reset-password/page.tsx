@@ -62,7 +62,7 @@ export default function ResetPasswordPage() {
               </button>
               <Link
                 href="/login"
-                className="block w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors text-center"
+                className="block w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-colors text-center"
               >
                 Voltar para o login
               </Link>
@@ -88,8 +88,8 @@ export default function ResetPasswordPage() {
         {/* Card */}
         <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-xl p-8 border border-neutral-200 dark:border-neutral-800">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-8 h-8 text-blue-600" />
+            <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Mail className="w-8 h-8 text-emerald-600" />
             </div>
             <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
               Esqueceu a senha?
@@ -121,7 +121,7 @@ export default function ResetPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                 placeholder="seu@email.com"
               />
             </div>
@@ -130,7 +130,7 @@ export default function ResetPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -147,7 +147,7 @@ export default function ResetPasswordPage() {
         {/* Footer */}
         <p className="text-center text-sm text-neutral-500 mt-8">
           Lembrou a senha?{' '}
-          <Link href="/login" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium">
+          <Link href="/login" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 font-medium">
             Fazer login
           </Link>
         </p>

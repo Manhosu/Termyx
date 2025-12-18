@@ -19,7 +19,7 @@ export default function TermsPage() {
               Voltar
             </Link>
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">T</span>
               </div>
               <span className="text-xl font-bold text-neutral-900 dark:text-white">Termyx</span>
@@ -31,7 +31,7 @@ export default function TermsPage() {
       {/* Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
             <FileText className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -126,19 +126,19 @@ export default function TermsPage() {
               Para duvidas sobre estes Termos de Uso, entre em contato conosco:
             </p>
             <p className="text-neutral-600 dark:text-neutral-400">
-              Email: <a href="mailto:suporte@termyx.com.br" className="text-blue-600 hover:underline">suporte@termyx.com.br</a>
+              Email: <a href="mailto:suporte@termyx.com.br" className="text-emerald-600 hover:underline">suporte@termyx.com.br</a>
             </p>
           </section>
         </div>
 
         <div className="mt-12 pt-8 border-t border-neutral-200 dark:border-neutral-800">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <Link href="/privacy" className="text-blue-600 hover:underline">
+            <Link href="/privacy" className="text-emerald-600 hover:underline">
               Ver Politica de Privacidade
             </Link>
             <Link
               href="/"
-              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+              className="px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 transition-colors"
             >
               Voltar para o inicio
             </Link>

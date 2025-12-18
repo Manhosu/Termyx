@@ -94,7 +94,7 @@ export default async function SharePage({ params }: SharePageProps) {
           </p>
           <Link
             href="/"
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+            className="inline-block px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors"
           >
             Ir para o Termyx
           </Link>
@@ -139,7 +139,7 @@ export default async function SharePage({ params }: SharePageProps) {
       <header className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">T</span>
             </div>
             <span className="text-lg font-bold text-neutral-900 dark:text-white">Termyx</span>
@@ -156,7 +156,7 @@ export default async function SharePage({ params }: SharePageProps) {
         <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6 mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
                 <FileText className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -180,7 +180,7 @@ export default async function SharePage({ params }: SharePageProps) {
             {document.pdf_path && (
               <a
                 href={`/api/share/download?token=${token}`}
-                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors"
               >
                 <Download className="w-4 h-4" />
                 Download PDF
@@ -205,7 +205,7 @@ export default async function SharePage({ params }: SharePageProps) {
           <p>Este link expira em {format(new Date(share.expires_at), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
           <p className="mt-2">
             Powered by{' '}
-            <Link href="/" className="text-blue-600 hover:underline">
+            <Link href="/" className="text-emerald-600 hover:underline">
               Termyx
             </Link>
           </p>

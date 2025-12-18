@@ -5,13 +5,13 @@ import { Activity, User, FileText, CreditCard, LogIn, Shield, Search, Filter, Re
 export const dynamic = 'force-dynamic'
 
 const actionConfig: Record<string, { label: string; icon: typeof Activity; color: string }> = {
-  'user.login': { label: 'Login', icon: LogIn, color: 'text-blue-600 bg-blue-100 dark:bg-blue-900/30' },
+  'user.login': { label: 'Login', icon: LogIn, color: 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30' },
   'user.signup': { label: 'Cadastro', icon: User, color: 'text-green-600 bg-green-100 dark:bg-green-900/30' },
-  'document.generate_pdf': { label: 'PDF Gerado', icon: FileText, color: 'text-purple-600 bg-purple-100 dark:bg-purple-900/30' },
+  'document.generate_pdf': { label: 'PDF Gerado', icon: FileText, color: 'text-teal-600 bg-teal-100 dark:bg-teal-900/30' },
   'document.send_email': { label: 'Email Enviado', icon: FileText, color: 'text-amber-600 bg-amber-100 dark:bg-amber-900/30' },
   'payment.checkout_created': { label: 'Checkout Criado', icon: CreditCard, color: 'text-cyan-600 bg-cyan-100 dark:bg-cyan-900/30' },
   'payment.completed': { label: 'Pagamento Completo', icon: CreditCard, color: 'text-green-600 bg-green-100 dark:bg-green-900/30' },
-  'subscription.created': { label: 'Assinatura Criada', icon: CreditCard, color: 'text-blue-600 bg-blue-100 dark:bg-blue-900/30' },
+  'subscription.created': { label: 'Assinatura Criada', icon: CreditCard, color: 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30' },
   'subscription.cancelled': { label: 'Assinatura Cancelada', icon: CreditCard, color: 'text-red-600 bg-red-100 dark:bg-red-900/30' },
   'admin.action': { label: 'Acao Admin', icon: Shield, color: 'text-red-600 bg-red-100 dark:bg-red-900/30' },
 }
@@ -64,8 +64,8 @@ export default async function AdminActivityPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-              <Activity className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+              <Activity className="w-5 h-5 text-emerald-600" />
             </div>
             <span className="text-sm text-neutral-500">Atividades Hoje</span>
           </div>
@@ -88,8 +88,8 @@ export default async function AdminActivityPage() {
 
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-              <FileText className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center">
+              <FileText className="w-5 h-5 text-teal-600" />
             </div>
             <span className="text-sm text-neutral-500">PDFs Gerados</span>
           </div>
@@ -118,10 +118,10 @@ export default async function AdminActivityPage() {
           <input
             type="text"
             placeholder="Buscar por usuario ou acao..."
-            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>
-        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select className="px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
           <option value="">Todas as acoes</option>
           <option value="user.login">Login</option>
           <option value="user.signup">Cadastro</option>
@@ -207,7 +207,7 @@ export default async function AdminActivityPage() {
         {/* Load More */}
         {logs && logs.length >= 100 && (
           <div className="p-4 border-t border-neutral-200 dark:border-neutral-800 text-center">
-            <button className="px-4 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
+            <button className="px-4 py-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors">
               Carregar mais
             </button>
           </div>

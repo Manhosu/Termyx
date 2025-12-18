@@ -34,8 +34,8 @@ const planIcons: Record<string, React.ElementType> = {
 
 const planColors: Record<string, string> = {
   free: 'from-neutral-500 to-neutral-600',
-  basic: 'from-blue-500 to-blue-600',
-  pro: 'from-purple-500 to-purple-600',
+  basic: 'from-emerald-500 to-emerald-600',
+  pro: 'from-teal-500 to-teal-600',
   enterprise: 'from-amber-500 to-amber-600',
 }
 
@@ -165,15 +165,15 @@ export default async function BillingPage() {
                 key={plan.id}
                 className={`relative bg-white dark:bg-neutral-900 rounded-2xl border p-6 transition-all ${
                   isCurrentPlan
-                    ? 'border-blue-500 ring-2 ring-blue-500/20'
+                    ? 'border-emerald-500 ring-2 ring-emerald-500/20'
                     : plan.is_popular
-                    ? 'border-purple-500 ring-2 ring-purple-500/20'
+                    ? 'border-teal-500 ring-2 ring-teal-500/20'
                     : 'border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700'
                 }`}
               >
                 {plan.is_popular && !isCurrentPlan && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="px-3 py-1 bg-purple-600 text-white text-xs font-medium rounded-full">
+                    <span className="px-3 py-1 bg-teal-600 text-white text-xs font-medium rounded-full">
                       Mais popular
                     </span>
                   </div>
@@ -181,7 +181,7 @@ export default async function BillingPage() {
 
                 {isCurrentPlan && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-full">
+                    <span className="px-3 py-1 bg-emerald-600 text-white text-xs font-medium rounded-full">
                       Plano atual
                     </span>
                   </div>
@@ -248,11 +248,11 @@ export default async function BillingPage() {
       </div>
 
       {/* Buy Credits Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white">
+      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-6 text-white">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h2 className="text-xl font-bold">Precisa de mais creditos?</h2>
-            <p className="text-blue-100 mt-1">
+            <p className="text-emerald-100 mt-1">
               Compre pacotes de creditos avulsos para usar quando precisar
             </p>
           </div>
@@ -326,7 +326,7 @@ export default async function BillingPage() {
       <div className="text-center py-4">
         <p className="text-neutral-500">
           Tem alguma duvida sobre cobranca?{' '}
-          <Link href="/support" className="text-blue-600 hover:text-blue-700">
+          <Link href="/support" className="text-emerald-600 hover:text-emerald-700">
             Entre em contato
           </Link>
         </p>

@@ -78,7 +78,7 @@ export default function HelpPage() {
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center">
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <HelpCircle className="w-8 h-8 text-white" />
         </div>
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
@@ -97,7 +97,7 @@ export default function HelpPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Buscar na ajuda..."
-          className="w-full pl-12 pr-4 py-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full pl-12 pr-4 py-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
       </div>
 
@@ -105,10 +105,10 @@ export default function HelpPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <a
           href="mailto:suporte@termyx.com.br"
-          className="flex items-center gap-4 p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-blue-500 transition-colors"
+          className="flex items-center gap-4 p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-emerald-500 transition-colors"
         >
-          <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-            <Mail className="w-6 h-6 text-blue-600" />
+          <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
+            <Mail className="w-6 h-6 text-emerald-600" />
           </div>
           <div>
             <p className="font-medium text-neutral-900 dark:text-white">Email</p>
@@ -133,10 +133,10 @@ export default function HelpPage() {
 
         <Link
           href="/documents"
-          className="flex items-center gap-4 p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-purple-500 transition-colors"
+          className="flex items-center gap-4 p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-teal-500 transition-colors"
         >
-          <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
-            <FileText className="w-6 h-6 text-purple-600" />
+          <div className="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-xl flex items-center justify-center">
+            <FileText className="w-6 h-6 text-teal-600" />
           </div>
           <div>
             <p className="font-medium text-neutral-900 dark:text-white">Documentacao</p>
@@ -203,16 +203,16 @@ export default function HelpPage() {
       </div>
 
       {/* Contact CTA */}
-      <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-8 text-center text-white">
+      <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-8 text-center text-white">
         <h3 className="text-xl font-bold mb-2">
           Ainda precisa de ajuda?
         </h3>
-        <p className="text-blue-100 mb-6">
+        <p className="text-emerald-100 mb-6">
           Nossa equipe esta pronta para ajudar voce
         </p>
         <a
           href="mailto:suporte@termyx.com.br"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 font-medium rounded-xl hover:bg-blue-50 transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-white text-emerald-600 font-medium rounded-xl hover:bg-emerald-50 transition-colors"
         >
           <Mail className="w-5 h-5" />
           Entrar em contato

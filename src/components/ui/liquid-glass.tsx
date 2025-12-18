@@ -109,7 +109,7 @@ export function LiquidGlassCard({
       {/* Content */}
       <div className="relative p-6">
         {icon && (
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white mb-4 shadow-lg">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white mb-4 shadow-lg">
             {icon}
           </div>
         )}
@@ -141,7 +141,7 @@ interface LiquidGlassButtonProps {
 }
 
 const buttonVariants = {
-  primary: 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent hover:from-blue-700 hover:to-purple-700',
+  primary: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-transparent hover:from-emerald-700 hover:to-teal-700',
   secondary: 'bg-white/60 dark:bg-gray-800/60 text-gray-900 dark:text-white border-white/30 dark:border-gray-700/30 hover:bg-white/80 dark:hover:bg-gray-800/80',
   ghost: 'bg-transparent text-gray-700 dark:text-gray-300 border-transparent hover:bg-white/40 dark:hover:bg-gray-800/40',
 }
@@ -245,7 +245,7 @@ export function LiquidGlassInput({
             icon && 'pl-12',
             'text-gray-900 dark:text-white',
             'placeholder:text-gray-400 dark:placeholder:text-gray-500',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50',
+            'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50',
             'transition-all duration-300',
             error && 'border-red-500/50 focus:ring-red-500/50'
           )}

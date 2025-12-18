@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { FileText, Zap, Shield, CreditCard, ArrowRight, Sparkles, Users, TrendingUp, Menu, X } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
@@ -22,14 +23,14 @@ const features = [
     icon: FileText,
     title: 'Templates Profissionais',
     description: 'Biblioteca com contratos, recibos, orcamentos e mais. Todos juridicamente revisados por especialistas.',
-    gradient: 'from-blue-500 to-cyan-500',
+    gradient: 'from-emerald-500 to-teal-500',
     delay: 0,
   },
   {
     icon: Zap,
     title: 'Geracao Instantanea',
     description: 'Preencha os dados e receba seu PDF profissional em segundos. Otimizado para produtividade maxima.',
-    gradient: 'from-purple-500 to-pink-500',
+    gradient: 'from-teal-500 to-cyan-500',
     delay: 0.1,
   },
   {
@@ -148,17 +149,20 @@ export default function LandingPage() {
       >
         <nav className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center group">
             <motion.div
-              className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25"
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <span className="text-white font-bold text-xl">T</span>
+              <Image
+                src="/logo.png"
+                alt="Termyx"
+                width={150}
+                height={40}
+                className="h-10 w-auto"
+                priority
+              />
             </motion.div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Termyx
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -188,7 +192,7 @@ export default function LandingPage() {
             </Link>
             <Link href="/signup">
               <motion.button
-                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
+                className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all"
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -224,7 +228,7 @@ export default function LandingPage() {
               <a
                 key={link.label}
                 href={link.href}
-                className="block py-2 text-neutral-700 dark:text-neutral-300 font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                className="block py-2 text-neutral-700 dark:text-neutral-300 font-medium hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
@@ -237,7 +241,7 @@ export default function LandingPage() {
                 </button>
               </Link>
               <Link href="/signup" className="block">
-                <button className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl">
+                <button className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl">
                   Cadastrar
                 </button>
               </Link>
@@ -255,17 +259,17 @@ export default function LandingPage() {
         {/* Floating shapes */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
-            className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"
+            className="absolute top-20 left-10 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl"
             animate={{ y: [0, -30, 0], x: [0, 20, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
+            className="absolute bottom-20 right-10 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"
             animate={{ y: [0, 30, 0], x: [0, -20, 0] }}
             transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-full blur-3xl"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-emerald-500/5 to-teal-500/5 rounded-full blur-3xl"
             animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
             transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
           />
@@ -283,7 +287,7 @@ export default function LandingPage() {
             transition={{ delay: 0.2 }}
           >
             <FloatingBadge className="mb-8">
-              <Sparkles className="w-4 h-4 text-purple-500" />
+              <Sparkles className="w-4 h-4 text-emerald-500" />
               <span>Novo: Templates de contratos atualizados para 2025</span>
             </FloatingBadge>
           </motion.div>
@@ -343,11 +347,11 @@ export default function LandingPage() {
               <span className="text-sm">SSL Seguro</span>
             </div>
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-500" />
+              <Users className="w-5 h-5 text-teal-500" />
               <span className="text-sm">+15.000 usuarios</span>
             </div>
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-purple-500" />
+              <TrendingUp className="w-5 h-5 text-cyan-500" />
               <span className="text-sm">99.9% uptime</span>
             </div>
           </motion.div>
@@ -406,7 +410,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400 text-sm font-medium mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-6"
               whileHover={{ scale: 1.05 }}
             >
               <Sparkles className="w-4 h-4" />
@@ -432,7 +436,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: feature.delay }}
               >
-                <FloatingCard className="p-8 h-full" glowColor={feature.gradient.includes('blue') ? 'blue' : feature.gradient.includes('purple') ? 'purple' : feature.gradient.includes('emerald') ? 'green' : 'orange'}>
+                <FloatingCard className="p-8 h-full" glowColor={feature.gradient.includes('emerald') ? 'green' : feature.gradient.includes('teal') ? 'cyan' : feature.gradient.includes('orange') ? 'orange' : 'green'}>
                   <FeatureIcon icon={feature.icon} gradient={feature.gradient} className="mb-6" />
                   <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">
                     {feature.title}
@@ -486,7 +490,7 @@ export default function LandingPage() {
               >
                 <AnimatedBorder>
                   <div className="p-8 text-center">
-                    <div className="text-7xl font-bold bg-gradient-to-r from-blue-600/20 to-purple-600/20 bg-clip-text text-transparent mb-4">
+                    <div className="text-7xl font-bold bg-gradient-to-r from-emerald-600/20 to-teal-600/20 bg-clip-text text-transparent mb-4">
                       {item.step}
                     </div>
                     <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-3">
@@ -635,11 +639,14 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-12">
             {/* Brand */}
             <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">T</span>
-                </div>
-                <span className="text-2xl font-bold text-white">Termyx</span>
+              <div className="mb-6">
+                <Image
+                  src="/logo.png"
+                  alt="Termyx"
+                  width={150}
+                  height={40}
+                  className="h-10 w-auto brightness-0 invert"
+                />
               </div>
               <p className="text-neutral-400 max-w-sm mb-6">
                 A plataforma mais avancada para geracao de documentos profissionais. Simples, rapido e seguro.

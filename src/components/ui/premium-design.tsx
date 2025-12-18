@@ -15,8 +15,8 @@ interface MeshGradientProps {
 
 export function MeshGradient({ className, variant = 'hero' }: MeshGradientProps) {
   const variants = {
-    hero: 'from-blue-600/30 via-purple-600/20 to-pink-600/30',
-    section: 'from-cyan-500/20 via-blue-500/15 to-purple-500/20',
+    hero: 'from-emerald-600/30 via-teal-600/20 to-cyan-600/30',
+    section: 'from-teal-500/20 via-emerald-500/15 to-cyan-500/20',
     card: 'from-white/40 via-white/20 to-white/40 dark:from-white/10 dark:via-white/5 dark:to-white/10',
   }
 
@@ -41,7 +41,7 @@ export function MeshGradient({ className, variant = 'hero' }: MeshGradientProps)
       />
       {/* Secondary mesh blob */}
       <motion.div
-        className="absolute -bottom-1/2 -right-1/2 w-full h-full rounded-full bg-gradient-to-tl from-pink-500/25 via-violet-500/20 to-cyan-500/25 blur-3xl"
+        className="absolute -bottom-1/2 -right-1/2 w-full h-full rounded-full bg-gradient-to-tl from-cyan-500/25 via-teal-500/20 to-emerald-500/25 blur-3xl"
         animate={{
           x: [0, -80, -40, 0],
           y: [0, -60, -120, 0],
@@ -55,7 +55,7 @@ export function MeshGradient({ className, variant = 'hero' }: MeshGradientProps)
       />
       {/* Tertiary accent blob */}
       <motion.div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-3xl"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 rounded-full bg-gradient-to-r from-emerald-400/20 to-teal-400/20 blur-3xl"
         animate={{
           scale: [1, 1.3, 1],
           rotate: [0, 180, 360],
@@ -116,8 +116,8 @@ export function FloatingCard({
   }
 
   const glowColors = {
-    blue: 'shadow-blue-500/20 hover:shadow-blue-500/40',
-    purple: 'shadow-purple-500/20 hover:shadow-purple-500/40',
+    blue: 'shadow-emerald-500/20 hover:shadow-emerald-500/40',
+    purple: 'shadow-teal-500/20 hover:shadow-teal-500/40',
     cyan: 'shadow-cyan-500/20 hover:shadow-cyan-500/40',
     pink: 'shadow-pink-500/20 hover:shadow-pink-500/40',
     green: 'shadow-emerald-500/20 hover:shadow-emerald-500/40',
@@ -181,10 +181,10 @@ export function GradientText({
   animate = false,
 }: GradientTextProps) {
   const gradients = {
-    primary: 'from-blue-600 via-purple-600 to-blue-600',
-    secondary: 'from-cyan-500 via-blue-500 to-purple-500',
-    accent: 'from-pink-500 via-purple-500 to-indigo-500',
-    rainbow: 'from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500',
+    primary: 'from-emerald-600 via-teal-600 to-emerald-600',
+    secondary: 'from-teal-500 via-emerald-500 to-cyan-500',
+    accent: 'from-cyan-500 via-teal-500 to-emerald-500',
+    rainbow: 'from-emerald-500 via-teal-500 via-cyan-500 via-sky-500 to-emerald-500',
   }
 
   return (
@@ -236,10 +236,10 @@ export function PremiumButton({
 
   const variants = {
     primary: cn(
-      'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-[length:200%_auto]',
+      'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 bg-[length:200%_auto]',
       'text-white font-semibold',
       'hover:bg-[position:right_center]',
-      glow && 'shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-purple-500/40'
+      glow && 'shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-teal-500/40'
     ),
     secondary: cn(
       'bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl',
@@ -253,9 +253,9 @@ export function PremiumButton({
       'backdrop-blur-sm'
     ),
     outline: cn(
-      'bg-transparent border-2 border-blue-500/50 hover:border-blue-500',
-      'text-blue-600 dark:text-blue-400 font-semibold',
-      'hover:bg-blue-500/10'
+      'bg-transparent border-2 border-emerald-500/50 hover:border-emerald-500',
+      'text-emerald-600 dark:text-emerald-400 font-semibold',
+      'hover:bg-emerald-500/10'
     ),
   }
 
@@ -349,7 +349,7 @@ export function StatCounter({ value, label, suffix, className }: StatCounterProp
       viewport={{ once: true }}
     >
       <motion.div
-        className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+        className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"
         initial={{ scale: 0.5 }}
         whileInView={{ scale: 1 }}
         viewport={{ once: true }}
@@ -408,7 +408,7 @@ export function TestimonialCard({
 
       {/* Author */}
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
           <span className="text-white font-bold text-lg">{author.charAt(0)}</span>
         </div>
         <div>
@@ -449,15 +449,15 @@ export function PricingCard({
     <FloatingCard
       className={cn(
         'relative p-8',
-        highlighted && 'border-2 border-blue-500/50 scale-105 z-10'
+        highlighted && 'border-2 border-emerald-500/50 scale-105 z-10'
       )}
-      glowColor={highlighted ? 'blue' : 'purple'}
+      glowColor={highlighted ? 'green' : 'cyan'}
       intensity={highlighted ? 'intense' : 'medium'}
     >
       {/* Popular badge */}
       {highlighted && (
         <motion.div
-          className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-white text-sm font-semibold shadow-lg"
+          className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full text-white text-sm font-semibold shadow-lg"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
@@ -472,7 +472,7 @@ export function PricingCard({
 
       {/* Price */}
       <div className="mb-8">
-        <span className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <span className="text-5xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
           {price}
         </span>
         <span className="text-neutral-500 ml-2">{period}</span>
@@ -489,7 +489,7 @@ export function PricingCard({
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
           >
-            <div className="w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
+            <div className="w-5 h-5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center flex-shrink-0">
               <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
               </svg>
@@ -526,7 +526,7 @@ export function AnimatedBorder({ children, className }: AnimatedBorderProps) {
     <div className={cn('relative rounded-3xl p-[2px] overflow-hidden', className)}>
       {/* Animated gradient border */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 to-blue-500 bg-[length:400%_100%]"
+        className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-teal-500 via-cyan-500 to-emerald-500 bg-[length:400%_100%]"
         animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
         transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
       />

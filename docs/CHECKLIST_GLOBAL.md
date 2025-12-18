@@ -179,14 +179,33 @@ Etapa 9 (Admin) --> Etapa 10 (Deploy)
 ## Notas Importantes
 
 ### MCP Supabase
-- **Status**: Desconectado (executar migrations manualmente)
+- **Status**: Conectado e funcionando
 - **Token**: Configurado no .claude.json do projeto
-- **Migrations pendentes**:
-  - 003_add_user_profile_fields.sql (phone, cpf_cnpj, avatar_url)
-  - 004_add_favorite_templates.sql (favorite_templates, deleted_at, avatars bucket)
-  - 005_add_archived_at.sql (archived_at para documentos)
-  - 006_add_credits_and_shares.sql (credit_transactions, document_shares)
-  - 007_add_notifications.sql (notifications, templates.cloned_from)
+- **Migrations aplicadas** (15 total):
+  - initial_schema
+  - triggers_and_seeds
+  - seed_templates (1 e 2)
+  - rls_policies
+  - add_user_profile_fields (phone, cpf_cnpj, avatar_url)
+  - add_favorite_templates (favorite_templates, deleted_at, avatars bucket)
+  - add_archived_at (archived_at para documentos)
+  - add_credit_transactions (credit_transactions table)
+  - add_notifications (notifications, templates.cloned_from)
+  - fix_function_search_path (segurança: SET search_path nas funções)
+  - add_missing_fk_indexes (performance: índices em foreign keys)
+  - optimize_rls_policies (performance: (select auth.uid()) nas políticas)
+  - consolidate_permissive_policies (performance: políticas RLS unificadas)
+  - fix_plans_policies (performance: separação de políticas admin por ação)
+
+### Paleta de Cores (Dezembro 2025)
+- **Migração completa**: blue/purple → emerald/teal
+- **Cores primárias**: emerald-500, emerald-600, teal-500, teal-600
+- **Cores de acento**: cyan-500, green-500
+- **Gradientes**: from-emerald-500 to-teal-600
+- **Focus rings**: focus:ring-emerald-500
+- **Status "sent"**: teal-100/teal-700 (era blue)
+- **Categorias de template**: emerald (contrato), teal (orçamento)
+- **Todos os arquivos atualizados**: ~40 arquivos .tsx
 
 ### Decisoes Tecnicas
 - Frontend: Next.js 15.4.9 com App Router
@@ -198,11 +217,22 @@ Etapa 9 (Admin) --> Etapa 10 (Deploy)
 - PDF: Puppeteer em container separado
 - Pagamentos: Stripe (prioridade) + Mercado Pago (BR)
 
+### Otimizações de Banco de Dados (Dezembro 2025)
+- **Segurança**: 0 avisos (todas as funções com search_path fixo)
+- **Performance**: RLS policies otimizadas com `(select auth.uid())`
+- **Índices**: Foreign keys indexadas (document_sends, document_shares, documents, users)
+- **Triggers**: update_updated_at e handle_new_user com SECURITY DEFINER
+- **RLS Consolidado**: Políticas permissivas múltiplas unificadas (0 avisos WARN)
+  - audit_logs, document_shares, plans, templates, users
+  - Políticas SELECT consolidadas com OR conditions
+  - Políticas admin separadas por ação (INSERT, UPDATE, DELETE)
+
 ### Problemas Conhecidos
 - ~~Build de producao com erro em paginas de erro (404/500)~~ - **RESOLVIDO**
+- ~~Avisos de segurança nas funções SQL~~ - **RESOLVIDO**
 - Build de producao funcionando corretamente (49 paginas/rotas geradas)
 - **MVP 100% COMPLETO** - Pronto para deploy na Vercel
-- Migrations pendentes devem ser executadas manualmente no Supabase SQL Editor
+- Todas as migrations aplicadas via MCP Supabase
 
 ### Paginas Adicionais Implementadas (Dezembro 2025)
 - /terms - Termos de Uso

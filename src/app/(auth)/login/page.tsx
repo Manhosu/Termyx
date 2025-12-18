@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
@@ -61,10 +62,17 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
-            Termyx
-          </h1>
-          <p className="text-neutral-500 mt-2">
+          <Link href="/" className="inline-block mb-4">
+            <Image
+              src="/logo.png"
+              alt="Termyx"
+              width={180}
+              height={48}
+              className="h-12 w-auto mx-auto"
+              priority
+            />
+          </Link>
+          <p className="text-neutral-500">
             Entre na sua conta
           </p>
         </div>
@@ -93,7 +101,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                 placeholder="seu@email.com"
               />
             </div>
@@ -113,7 +121,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
+                  className="w-full px-4 py-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all pr-12"
                   placeholder="********"
                 />
                 <button
@@ -131,7 +139,7 @@ export default function LoginPage() {
             <div className="text-right">
               <Link
                 href="/reset-password"
-                className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
               >
                 Esqueceu a senha?
               </Link>
@@ -141,7 +149,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -166,7 +174,7 @@ export default function LoginPage() {
             Nao tem uma conta?{' '}
             <Link
               href="/signup"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
+              className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 font-medium"
             >
               Criar conta
             </Link>

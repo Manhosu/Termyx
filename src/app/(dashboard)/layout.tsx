@@ -13,11 +13,11 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-neutral-950 dark:via-blue-950/10 dark:to-purple-950/10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-teal-50/20 dark:from-neutral-950 dark:via-emerald-950/10 dark:to-teal-950/10">
       {/* Animated Background Blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-3xl"
+          className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 rounded-full blur-3xl"
           animate={{
             x: [0, 30, 0],
             y: [0, -20, 0],
@@ -30,7 +30,7 @@ export default function DashboardLayout({
           }}
         />
         <motion.div
-          className="absolute top-1/2 -left-40 w-80 h-80 bg-gradient-to-br from-cyan-400/15 to-blue-500/15 rounded-full blur-3xl"
+          className="absolute top-1/2 -left-40 w-80 h-80 bg-gradient-to-br from-cyan-400/15 to-teal-500/15 rounded-full blur-3xl"
           animate={{
             x: [0, 20, 0],
             y: [0, 30, 0],
@@ -43,7 +43,7 @@ export default function DashboardLayout({
           }}
         />
         <motion.div
-          className="absolute bottom-0 right-1/4 w-72 h-72 bg-gradient-to-br from-purple-400/15 to-pink-500/15 rounded-full blur-3xl"
+          className="absolute bottom-0 right-1/4 w-72 h-72 bg-gradient-to-br from-teal-400/15 to-cyan-500/15 rounded-full blur-3xl"
           animate={{
             x: [0, -25, 0],
             y: [0, -20, 0],
