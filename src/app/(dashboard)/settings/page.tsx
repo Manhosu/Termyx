@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { User, Mail, Bell, Shield, Loader2, Check, Camera } from 'lucide-react'
+import { User, Mail, Bell, Shield, Loader2, Check, Camera, Building2, MapPin, Phone, Globe } from 'lucide-react'
 
 interface UserProfile {
   id: string
@@ -14,8 +14,25 @@ interface UserProfile {
   avatar_url: string | null
 }
 
+interface CompanyProfile {
+  id?: string
+  user_id: string
+  name: string
+  legal_name: string | null
+  document_number: string | null
+  email: string | null
+  phone: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  zip_code: string | null
+  logo_url: string | null
+  website: string | null
+}
+
 export default function SettingsPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -27,6 +44,7 @@ export default function SettingsPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
+    // Load user profile
     const { data } = await supabase
       .from('users')
       .select('*')
@@ -39,6 +57,34 @@ export default function SettingsPage() {
         email: user.email || ''
       })
     }
+
+    // Load company profile
+    const { data: company } = await supabase
+      .from('company_profiles')
+      .select('*')
+      .eq('user_id', user.id)
+      .single()
+
+    if (company) {
+      setCompanyProfile(company)
+    } else {
+      // Initialize empty company profile
+      setCompanyProfile({
+        user_id: user.id,
+        name: '',
+        legal_name: null,
+        document_number: null,
+        email: null,
+        phone: null,
+        address: null,
+        city: null,
+        state: null,
+        zip_code: null,
+        logo_url: null,
+        website: null,
+      })
+    }
+
     setLoading(false)
   }, [supabase])
 
@@ -46,7 +92,7 @@ export default function SettingsPage() {
     loadProfile()
   }, [loadProfile])
 
-  const handleSave = async () => {
+  const handleSaveProfile = async () => {
     if (!profile) return
     setSaving(true)
 
@@ -67,8 +113,65 @@ export default function SettingsPage() {
     }
   }
 
+  const handleSaveCompany = async () => {
+    if (!companyProfile) return
+    setSaving(true)
+
+    if (companyProfile.id) {
+      // Update existing
+      const { error } = await supabase
+        .from('company_profiles')
+        .update({
+          name: companyProfile.name,
+          legal_name: companyProfile.legal_name,
+          document_number: companyProfile.document_number,
+          email: companyProfile.email,
+          phone: companyProfile.phone,
+          address: companyProfile.address,
+          city: companyProfile.city,
+          state: companyProfile.state,
+          zip_code: companyProfile.zip_code,
+          website: companyProfile.website,
+        })
+        .eq('id', companyProfile.id)
+
+      setSaving(false)
+      if (!error) {
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2000)
+      }
+    } else {
+      // Insert new
+      const { data, error } = await supabase
+        .from('company_profiles')
+        .insert({
+          user_id: companyProfile.user_id,
+          name: companyProfile.name,
+          legal_name: companyProfile.legal_name,
+          document_number: companyProfile.document_number,
+          email: companyProfile.email,
+          phone: companyProfile.phone,
+          address: companyProfile.address,
+          city: companyProfile.city,
+          state: companyProfile.state,
+          zip_code: companyProfile.zip_code,
+          website: companyProfile.website,
+        })
+        .select()
+        .single()
+
+      setSaving(false)
+      if (!error && data) {
+        setCompanyProfile(data)
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2000)
+      }
+    }
+  }
+
   const tabs = [
     { id: 'profile', label: 'Perfil', icon: User },
+    { id: 'company', label: 'Empresa', icon: Building2 },
     { id: 'notifications', label: 'Notificacoes', icon: Bell },
     { id: 'security', label: 'Seguranca', icon: Shield },
   ]
@@ -94,12 +197,12 @@ export default function SettingsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="flex gap-2 border-b border-neutral-200 dark:border-neutral-800 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
+            className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
               activeTab === tab.id
                 ? 'border-emerald-600 text-emerald-600'
                 : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
@@ -111,7 +214,7 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      {/* Content */}
+      {/* Profile Tab */}
       {activeTab === 'profile' && profile && (
         <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6 space-y-6">
           {/* Avatar */}
@@ -210,7 +313,7 @@ export default function SettingsPage() {
           {/* Save Button */}
           <div className="flex justify-end pt-4 border-t border-neutral-200 dark:border-neutral-800">
             <button
-              onClick={handleSave}
+              onClick={handleSaveProfile}
               disabled={saving}
               className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors disabled:opacity-50"
             >
@@ -220,6 +323,220 @@ export default function SettingsPage() {
                 <Check className="w-4 h-4" />
               ) : null}
               {saved ? 'Salvo!' : 'Salvar alteracoes'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Company Tab */}
+      {activeTab === 'company' && companyProfile && (
+        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6 space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-neutral-200 dark:border-neutral-800">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+              <Building2 className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-neutral-900 dark:text-white">
+                Dados da Empresa
+              </h3>
+              <p className="text-sm text-neutral-500">
+                Essas informacoes serao usadas nos seus documentos
+              </p>
+            </div>
+          </div>
+
+          {/* Form */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Nome Fantasia *
+              </label>
+              <input
+                type="text"
+                value={companyProfile.name || ''}
+                onChange={(e) => setCompanyProfile({ ...companyProfile, name: e.target.value })}
+                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Nome da sua empresa"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Razao Social
+              </label>
+              <input
+                type="text"
+                value={companyProfile.legal_name || ''}
+                onChange={(e) => setCompanyProfile({ ...companyProfile, legal_name: e.target.value })}
+                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Razao social completa"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                CNPJ/CPF
+              </label>
+              <input
+                type="text"
+                value={companyProfile.document_number || ''}
+                onChange={(e) => setCompanyProfile({ ...companyProfile, document_number: e.target.value })}
+                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="00.000.000/0000-00"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Email Comercial
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                <input
+                  type="email"
+                  value={companyProfile.email || ''}
+                  onChange={(e) => setCompanyProfile({ ...companyProfile, email: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="contato@empresa.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Telefone Comercial
+              </label>
+              <div className="relative">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                <input
+                  type="tel"
+                  value={companyProfile.phone || ''}
+                  onChange={(e) => setCompanyProfile({ ...companyProfile, phone: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="(00) 0000-0000"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Website
+              </label>
+              <div className="relative">
+                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                <input
+                  type="url"
+                  value={companyProfile.website || ''}
+                  onChange={(e) => setCompanyProfile({ ...companyProfile, website: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="https://www.empresa.com"
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Endereco
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                <input
+                  type="text"
+                  value={companyProfile.address || ''}
+                  onChange={(e) => setCompanyProfile({ ...companyProfile, address: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="Rua, numero, complemento"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Cidade
+              </label>
+              <input
+                type="text"
+                value={companyProfile.city || ''}
+                onChange={(e) => setCompanyProfile({ ...companyProfile, city: e.target.value })}
+                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Cidade"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Estado
+              </label>
+              <select
+                value={companyProfile.state || ''}
+                onChange={(e) => setCompanyProfile({ ...companyProfile, state: e.target.value })}
+                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <option value="">Selecione</option>
+                <option value="AC">Acre</option>
+                <option value="AL">Alagoas</option>
+                <option value="AP">Amapa</option>
+                <option value="AM">Amazonas</option>
+                <option value="BA">Bahia</option>
+                <option value="CE">Ceara</option>
+                <option value="DF">Distrito Federal</option>
+                <option value="ES">Espirito Santo</option>
+                <option value="GO">Goias</option>
+                <option value="MA">Maranhao</option>
+                <option value="MT">Mato Grosso</option>
+                <option value="MS">Mato Grosso do Sul</option>
+                <option value="MG">Minas Gerais</option>
+                <option value="PA">Para</option>
+                <option value="PB">Paraiba</option>
+                <option value="PR">Parana</option>
+                <option value="PE">Pernambuco</option>
+                <option value="PI">Piaui</option>
+                <option value="RJ">Rio de Janeiro</option>
+                <option value="RN">Rio Grande do Norte</option>
+                <option value="RS">Rio Grande do Sul</option>
+                <option value="RO">Rondonia</option>
+                <option value="RR">Roraima</option>
+                <option value="SC">Santa Catarina</option>
+                <option value="SP">Sao Paulo</option>
+                <option value="SE">Sergipe</option>
+                <option value="TO">Tocantins</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                CEP
+              </label>
+              <input
+                type="text"
+                value={companyProfile.zip_code || ''}
+                onChange={(e) => setCompanyProfile({ ...companyProfile, zip_code: e.target.value })}
+                className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="00000-000"
+              />
+            </div>
+          </div>
+
+          {/* Info Banner */}
+          <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
+            <p className="text-sm text-emerald-700 dark:text-emerald-400">
+              <strong>Dica:</strong> Preencha os dados da empresa para que eles sejam automaticamente preenchidos nos seus documentos.
+            </p>
+          </div>
+
+          {/* Save Button */}
+          <div className="flex justify-end pt-4 border-t border-neutral-200 dark:border-neutral-800">
+            <button
+              onClick={handleSaveCompany}
+              disabled={saving || !companyProfile.name}
+              className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors disabled:opacity-50"
+            >
+              {saving ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : saved ? (
+                <Check className="w-4 h-4" />
+              ) : null}
+              {saved ? 'Salvo!' : 'Salvar dados da empresa'}
             </button>
           </div>
         </div>

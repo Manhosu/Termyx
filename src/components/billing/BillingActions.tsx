@@ -21,7 +21,7 @@ export function UpgradeButton({
     setLoading(true)
 
     try {
-      const response = await fetch('/api/stripe/checkout', {
+      const response = await fetch('/api/mercadopago/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -62,43 +62,16 @@ export function UpgradeButton({
 }
 
 export function ManageSubscriptionButton() {
-  const [loading, setLoading] = useState(false)
-
-  const handleManage = async () => {
-    setLoading(true)
-
-    try {
-      const response = await fetch('/api/stripe/portal', {
-        method: 'POST',
-      })
-
-      const data = await response.json()
-
-      if (data.url) {
-        window.location.href = data.url
-      }
-    } catch (error) {
-      console.error('Portal error:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  // Mercado Pago nao tem portal de gerenciamento como Stripe
+  // O usuario pode cancelar entrando em contato com suporte
   return (
-    <button
-      onClick={handleManage}
-      disabled={loading}
-      className="flex items-center gap-2 px-4 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors disabled:opacity-50"
+    <a
+      href="/support"
+      className="flex items-center gap-2 px-4 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
     >
-      {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
-      ) : (
-        <>
-          <Settings className="w-4 h-4" />
-          Gerenciar Assinatura
-        </>
-      )}
-    </button>
+      <Settings className="w-4 h-4" />
+      Gerenciar Assinatura
+    </a>
   )
 }
 

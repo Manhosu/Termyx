@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { ArrowLeft, FileText, Download, Save, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { ArrowLeft, FileText, Download, Save, Eye, EyeOff, Loader2, Users, Building2, ChevronDown, Plus, Check } from 'lucide-react'
 import Link from 'next/link'
 
 interface Placeholder {
@@ -24,10 +24,62 @@ interface Template {
   price_credit: number
 }
 
+interface Client {
+  id: string
+  name: string
+  email: string | null
+  phone: string | null
+  document_number: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  zip_code: string | null
+}
+
+interface CompanyProfile {
+  id: string
+  name: string
+  legal_name: string | null
+  document_number: string | null
+  email: string | null
+  phone: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  zip_code: string | null
+  website: string | null
+}
+
+// Map placeholder names to data fields
+const companyFieldMap: Record<string, keyof CompanyProfile> = {
+  'COMPANY_NAME': 'name',
+  'COMPANY_LEGAL_NAME': 'legal_name',
+  'COMPANY_DOCUMENT': 'document_number',
+  'COMPANY_CNPJ': 'document_number',
+  'COMPANY_ADDRESS': 'address',
+  'COMPANY_CITY': 'city',
+  'COMPANY_STATE': 'state',
+  'COMPANY_ZIP': 'zip_code',
+  'COMPANY_EMAIL': 'email',
+  'COMPANY_PHONE': 'phone',
+  'COMPANY_WEBSITE': 'website',
+}
+
+const clientFieldMap: Record<string, keyof Client> = {
+  'CLIENT_NAME': 'name',
+  'CLIENT_DOCUMENT': 'document_number',
+  'CLIENT_CPF': 'document_number',
+  'CLIENT_CNPJ': 'document_number',
+  'CLIENT_ADDRESS': 'address',
+  'CLIENT_CITY': 'city',
+  'CLIENT_STATE': 'state',
+  'CLIENT_ZIP': 'zip_code',
+  'CLIENT_EMAIL': 'email',
+  'CLIENT_PHONE': 'phone',
+}
+
 export default function NewDocumentPage() {
   const router = useRouter()
-
-  // Get template ID from URL on client side
   const [templateId, setTemplateId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -44,13 +96,50 @@ export default function NewDocumentPage() {
   const [showPreview, setShowPreview] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // New states for company and clients
+  const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(null)
+  const [clients, setClients] = useState<Client[]>([])
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null)
+  const [showClientDropdown, setShowClientDropdown] = useState(false)
+
   const supabase = createClient()
+
+  // Load company profile and clients
+  useEffect(() => {
+    async function loadUserData() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      // Load company profile
+      const { data: company } = await supabase
+        .from('company_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single()
+
+      if (company) {
+        setCompanyProfile(company)
+      }
+
+      // Load clients
+      const { data: clientsList } = await supabase
+        .from('clients')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('name')
+
+      if (clientsList) {
+        setClients(clientsList)
+      }
+    }
+
+    loadUserData()
+  }, [supabase])
 
   useEffect(() => {
     async function loadTemplate() {
-      // Wait for templateId to be loaded from URL
       if (templateId === null) {
-        return // Still loading URL params
+        return
       }
 
       if (templateId === '') {
@@ -87,6 +176,41 @@ export default function NewDocumentPage() {
     loadTemplate()
   }, [templateId, supabase])
 
+  // Auto-fill company data when available
+  useEffect(() => {
+    if (!template || !companyProfile) return
+
+    setFormData(prev => {
+      const newData = { ...prev }
+      template.placeholders.forEach(p => {
+        const companyField = companyFieldMap[p.name]
+        if (companyField && companyProfile[companyField]) {
+          newData[p.name] = String(companyProfile[companyField])
+        }
+      })
+      return newData
+    })
+  }, [template, companyProfile])
+
+  // Auto-fill client data when selected
+  const handleSelectClient = useCallback((client: Client) => {
+    setSelectedClient(client)
+    setShowClientDropdown(false)
+
+    if (!template) return
+
+    setFormData(prev => {
+      const newData = { ...prev }
+      template.placeholders.forEach(p => {
+        const clientField = clientFieldMap[p.name]
+        if (clientField && client[clientField]) {
+          newData[p.name] = String(client[clientField])
+        }
+      })
+      return newData
+    })
+  }, [template])
+
   const handleInputChange = useCallback((name: string, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }))
   }, [])
@@ -95,9 +219,17 @@ export default function NewDocumentPage() {
     if (!template) return ''
 
     let html = template.content_html
-    Object.entries(formData).forEach(([key, value]) => {
-      const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g')
-      html = html.replace(regex, value || `<span class="placeholder">{{${key}}}</span>`)
+
+    // Replace placeholders with values or styled empty placeholders
+    template.placeholders.forEach(p => {
+      const value = formData[p.name]
+      const regex = new RegExp(`\\{\\{${p.name}\\}\\}`, 'g')
+
+      if (value) {
+        html = html.replace(regex, `<span class="filled-value">${value}</span>`)
+      } else {
+        html = html.replace(regex, `<span class="empty-placeholder">${p.label}</span>`)
+      }
     })
 
     return html
@@ -142,7 +274,6 @@ export default function NewDocumentPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Usuario nao autenticado')
 
-      // First save the document
       const { data: doc, error: saveError } = await supabase
         .from('documents')
         .insert({
@@ -157,7 +288,6 @@ export default function NewDocumentPage() {
 
       if (saveError) throw saveError
 
-      // Then call PDF generation API
       const response = await fetch('/api/documents/generate-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -171,7 +301,6 @@ export default function NewDocumentPage() {
 
       const result = await response.json()
 
-      // Update document with PDF path
       await supabase
         .from('documents')
         .update({
@@ -221,6 +350,9 @@ export default function NewDocumentPage() {
       </div>
     )
   }
+
+  // Check if template has client-related fields
+  const hasClientFields = template.placeholders.some(p => Object.keys(clientFieldMap).includes(p.name))
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -273,6 +405,128 @@ export default function NewDocumentPage() {
             <span className="hidden sm:inline">Gerar PDF</span>
           </button>
         </div>
+      </div>
+
+      {/* Quick Select Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {/* Company Info Card */}
+        {companyProfile ? (
+          <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-800 p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Dados da Empresa</p>
+                <p className="text-neutral-900 dark:text-white font-semibold truncate">{companyProfile.name}</p>
+              </div>
+              <Check className="w-5 h-5 text-emerald-500" />
+            </div>
+          </div>
+        ) : (
+          <Link
+            href="/settings?tab=company"
+            className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl border border-neutral-200 dark:border-neutral-700 p-4 hover:border-emerald-500 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-neutral-500" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-neutral-500">Dados da Empresa</p>
+                <p className="text-neutral-900 dark:text-white font-medium">Configurar dados</p>
+              </div>
+              <Plus className="w-5 h-5 text-neutral-400" />
+            </div>
+          </Link>
+        )}
+
+        {/* Client Selector */}
+        {hasClientFields && (
+          <div className="relative">
+            <button
+              onClick={() => setShowClientDropdown(!showClientDropdown)}
+              className={`w-full rounded-2xl border p-4 text-left transition-colors ${
+                selectedClient
+                  ? 'bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800'
+                  : 'bg-neutral-50 dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 hover:border-teal-500'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  selectedClient ? 'bg-teal-500' : 'bg-neutral-200 dark:bg-neutral-700'
+                }`}>
+                  <Users className={`w-5 h-5 ${selectedClient ? 'text-white' : 'text-neutral-500'}`} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-medium ${selectedClient ? 'text-teal-600 dark:text-teal-400' : 'text-neutral-500'}`}>
+                    Cliente
+                  </p>
+                  <p className="text-neutral-900 dark:text-white font-semibold truncate">
+                    {selectedClient ? selectedClient.name : 'Selecionar cliente'}
+                  </p>
+                </div>
+                <ChevronDown className={`w-5 h-5 transition-transform ${showClientDropdown ? 'rotate-180' : ''} ${
+                  selectedClient ? 'text-teal-500' : 'text-neutral-400'
+                }`} />
+              </div>
+            </button>
+
+            {/* Dropdown */}
+            {showClientDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl z-20 max-h-64 overflow-y-auto">
+                {clients.length > 0 ? (
+                  <>
+                    {clients.map(client => (
+                      <button
+                        key={client.id}
+                        onClick={() => handleSelectClient(client)}
+                        className={`w-full flex items-center gap-3 p-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors ${
+                          selectedClient?.id === client.id ? 'bg-teal-50 dark:bg-teal-900/20' : ''
+                        }`}
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/40 dark:to-cyan-900/40 flex items-center justify-center">
+                          <span className="text-sm font-bold text-teal-600 dark:text-teal-400">
+                            {client.name[0]?.toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="flex-1 text-left">
+                          <p className="font-medium text-neutral-900 dark:text-white">{client.name}</p>
+                          {client.email && (
+                            <p className="text-xs text-neutral-500">{client.email}</p>
+                          )}
+                        </div>
+                        {selectedClient?.id === client.id && (
+                          <Check className="w-4 h-4 text-teal-500" />
+                        )}
+                      </button>
+                    ))}
+                    <div className="border-t border-neutral-200 dark:border-neutral-800">
+                      <Link
+                        href="/clients"
+                        className="flex items-center gap-2 p-3 text-sm text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Cadastrar novo cliente
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <div className="p-4 text-center">
+                    <p className="text-neutral-500 text-sm mb-3">Nenhum cliente cadastrado</p>
+                    <Link
+                      href="/clients"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Cadastrar cliente
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
@@ -328,13 +582,19 @@ export default function NewDocumentPage() {
           margin-top: 1.5rem;
           margin-bottom: 0.5rem;
         }
-        .document-preview .placeholder {
-          background-color: #fef3c7;
-          color: #92400e;
-          padding: 0.125rem 0.25rem;
-          border-radius: 0.25rem;
-          font-family: monospace;
+        .document-preview .filled-value {
+          color: #059669;
+          font-weight: 500;
+        }
+        .document-preview .empty-placeholder {
+          display: inline-block;
+          background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+          color: #16a34a;
+          padding: 0.125rem 0.5rem;
+          border-radius: 0.375rem;
           font-size: 0.75rem;
+          font-family: system-ui, -apple-system, sans-serif;
+          border: 1px dashed #86efac;
         }
         .document-preview .signatures {
           margin-top: 3rem;
@@ -421,11 +681,21 @@ function FormField({ placeholder, value, onChange }: FormFieldProps) {
     onChange(formatted)
   }
 
+  // Check if this field is auto-filled
+  const isCompanyField = Object.keys(companyFieldMap).includes(placeholder.name)
+  const isClientField = Object.keys(clientFieldMap).includes(placeholder.name)
+  const isAutoFilled = (isCompanyField || isClientField) && value
+
   return (
     <div>
-      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
+      <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
         {placeholder.label}
-        {placeholder.required && <span className="text-red-500 ml-1">*</span>}
+        {placeholder.required && <span className="text-red-500">*</span>}
+        {isAutoFilled && (
+          <span className="text-xs px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded">
+            Auto
+          </span>
+        )}
       </label>
 
       {placeholder.type === 'textarea' ? (

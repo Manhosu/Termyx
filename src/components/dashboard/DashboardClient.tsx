@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { CreditCard, FileText, Crown, Plus, ArrowRight, Sparkles, TrendingUp } from 'lucide-react'
+import { CreditCard, FileText, Crown, Plus, ArrowRight, Sparkles } from 'lucide-react'
 
 interface RecentDocument {
   id: string
@@ -108,14 +108,12 @@ export function DashboardClient({
           label="Creditos Disponiveis"
           value={profile?.credits || 0}
           color="blue"
-          trend="+12%"
         />
         <StatCard
           icon={FileText}
           label="Documentos este Mes"
           value={docsThisMonth || 0}
           color="green"
-          trend="+5"
         />
         <StatCard
           icon={Crown}
@@ -212,10 +210,9 @@ interface StatCardProps {
   value: number | string
   color: 'blue' | 'green' | 'purple'
   isText?: boolean
-  trend?: string
 }
 
-function StatCard({ icon: Icon, label, value, color, isText, trend }: StatCardProps) {
+function StatCard({ icon: Icon, label, value, color, isText }: StatCardProps) {
   const gradients = {
     blue: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20',
     green: 'from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20',
@@ -240,27 +237,19 @@ function StatCard({ icon: Icon, label, value, color, isText, trend }: StatCardPr
       whileHover={{ scale: 1.02, y: -2 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <motion.div
-            className={`p-3 rounded-2xl ${iconBg[color]}`}
-            whileHover={{ rotate: 5 }}
-          >
-            <Icon className={`w-6 h-6 ${iconColors[color]}`} />
-          </motion.div>
-          <div>
-            <p className="text-sm text-neutral-500">{label}</p>
-            <p className={`${isText ? 'text-xl' : 'text-2xl'} font-bold text-neutral-900 dark:text-white`}>
-              {value}
-            </p>
-          </div>
+      <div className="flex items-center gap-4">
+        <motion.div
+          className={`p-3 rounded-2xl ${iconBg[color]}`}
+          whileHover={{ rotate: 5 }}
+        >
+          <Icon className={`w-6 h-6 ${iconColors[color]}`} />
+        </motion.div>
+        <div>
+          <p className="text-sm text-neutral-500">{label}</p>
+          <p className={`${isText ? 'text-xl' : 'text-2xl'} font-bold text-neutral-900 dark:text-white`}>
+            {value}
+          </p>
         </div>
-        {trend && (
-          <div className="flex items-center gap-1 text-green-600 dark:text-green-400 text-sm font-medium">
-            <TrendingUp className="w-4 h-4" />
-            {trend}
-          </div>
-        )}
       </div>
 
       {/* Decorative gradient blob */}

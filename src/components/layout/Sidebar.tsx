@@ -12,6 +12,7 @@ import {
   Settings,
   HelpCircle,
   LogOut,
+  Users,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -20,6 +21,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/templates', label: 'Templates', icon: FileText },
   { href: '/documents', label: 'Documentos', icon: FolderOpen },
+  { href: '/clients', label: 'Clientes', icon: Users },
   { href: '/billing', label: 'Plano', icon: CreditCard },
 ]
 

@@ -55,7 +55,7 @@ export default function BuyCreditsModal({ isOpen, onClose }: BuyCreditsModalProp
     setError(null)
 
     try {
-      const response = await fetch('/api/stripe/checkout', {
+      const response = await fetch('/api/mercadopago/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -70,7 +70,7 @@ export default function BuyCreditsModal({ isOpen, onClose }: BuyCreditsModalProp
         throw new Error(data.error || 'Erro ao processar pagamento')
       }
 
-      // Redirect to Stripe Checkout
+      // Redirect to Mercado Pago Checkout
       if (data.url) {
         window.location.href = data.url
       }
@@ -201,7 +201,7 @@ export default function BuyCreditsModal({ isOpen, onClose }: BuyCreditsModalProp
             )}
           </button>
           <p className="text-xs text-neutral-400 text-center mt-3">
-            Pagamento seguro processado pelo Stripe
+            Pagamento seguro processado pelo Mercado Pago
           </p>
         </div>
       </div>
