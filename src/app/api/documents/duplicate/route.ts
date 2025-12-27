@@ -38,6 +38,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid document ID' }, { status: 400 })
     }
 
+    // VERIFICACAO DE CREDITOS - Buscar creditos do usuario
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('credits')
+      .eq('id', user.id)
+      .single()
+
+    if (userError || !userData) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // Bloquear se sem creditos
+    if (userData.credits <= 0) {
+      return NextResponse.json({
+        error: 'Creditos insuficientes. Compre creditos ou assine um plano para continuar.',
+        code: 'NO_CREDITS',
+        credits: 0
+      }, { status: 402 })
+    }
+
     // Get original document
     const { data: originalDoc, error: fetchError } = await supabase
       .from('documents')
@@ -77,14 +97,32 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (insertError) {
+      // Se RLS bloqueou por falta de creditos
+      if (insertError.code === '42501' || insertError.message?.includes('credits')) {
+        return NextResponse.json({
+          error: 'Creditos insuficientes',
+          code: 'NO_CREDITS',
+          credits: 0
+        }, { status: 402 })
+      }
       console.error('Document duplication error:', insertError)
       return NextResponse.json({ error: 'Failed to duplicate document' }, { status: 500 })
+    }
+
+    // DEDUZIR CREDITO apos duplicacao bem-sucedida
+    const { data: newCredits, error: deductError } = await supabase
+      .rpc('deduct_credit', { p_user_id: user.id })
+
+    if (deductError) {
+      console.error('Credit deduction error:', deductError)
+      // Documento ja foi criado, nao reverter
     }
 
     return NextResponse.json({
       success: true,
       document: newDoc,
       message: 'Document duplicated successfully',
+      credits: newCredits ?? userData.credits - 1
     })
   } catch (error) {
     console.error('Document duplication error:', error)

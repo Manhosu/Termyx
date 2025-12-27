@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Moon, Sun, Bell, Search, Menu, Coins, X } from 'lucide-react'
+import { Bell, Search, Menu, Coins, X } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 
 interface HeaderProps {
@@ -11,34 +11,14 @@ interface HeaderProps {
 
 export function Header({ onMenuClick }: HeaderProps) {
   const { profile } = useUser()
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = useState(false)
   const [searchFocused, setSearchFocused] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+  const [showNotifications, setShowNotifications] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    const stored = localStorage.getItem('theme') as 'light' | 'dark' | null
-    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-
-    const initialTheme = stored || (systemDark ? 'dark' : 'light')
-    setTheme(initialTheme)
-    document.documentElement.classList.toggle('dark', initialTheme === 'dark')
   }, [])
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-
-    // Add transition class for smooth theme change
-    document.documentElement.classList.add('theme-transition')
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
-
-    setTimeout(() => {
-      document.documentElement.classList.remove('theme-transition')
-    }, 300)
-  }
 
   if (!mounted) return null
 
@@ -112,46 +92,52 @@ export function Header({ onMenuClick }: HeaderProps) {
           </motion.div>
         )}
 
-        {/* Theme Toggle */}
-        <motion.button
-          onClick={toggleTheme}
-          aria-label={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
-          className="p-2.5 rounded-2xl bg-white/60 dark:bg-neutral-800/60 hover:bg-white dark:hover:bg-neutral-800 border border-white/50 dark:border-neutral-700/50 shadow-sm transition-colors"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95, rotate: 15 }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={theme}
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-yellow-500" />
-              ) : (
-                <Moon className="w-5 h-5 text-slate-600" />
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </motion.button>
-
         {/* Notifications */}
-        <motion.button
-          aria-label="Notificacoes"
-          className="relative p-2.5 rounded-2xl bg-white/60 dark:bg-neutral-800/60 hover:bg-white dark:hover:bg-neutral-800 border border-white/50 dark:border-neutral-700/50 shadow-sm transition-colors"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Bell className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
-          <motion.span
-            className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-neutral-800"
-            aria-hidden="true"
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </motion.button>
+        <div className="relative">
+          <motion.button
+            onClick={() => setShowNotifications(!showNotifications)}
+            aria-label="Notificacoes"
+            className="relative p-2.5 rounded-2xl bg-white/60 dark:bg-neutral-800/60 hover:bg-white dark:hover:bg-neutral-800 border border-white/50 dark:border-neutral-700/50 shadow-sm transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Bell className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
+            <motion.span
+              className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-neutral-800"
+              aria-hidden="true"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+          </motion.button>
+
+          {/* Notifications Dropdown */}
+          <AnimatePresence>
+            {showNotifications && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="absolute right-0 mt-2 w-80 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden z-50"
+              >
+                <div className="p-4 border-b border-neutral-200 dark:border-neutral-800">
+                  <h3 className="font-semibold text-neutral-900 dark:text-white">Notificacoes</h3>
+                </div>
+                <div className="max-h-64 overflow-y-auto">
+                  <div className="p-4 text-center text-neutral-500 text-sm">
+                    <Bell className="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" />
+                    Nenhuma notificacao no momento
+                  </div>
+                </div>
+                <div className="p-3 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800/50">
+                  <button className="w-full text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 font-medium">
+                    Ver todas as notificacoes
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* User Avatar */}
         <motion.div

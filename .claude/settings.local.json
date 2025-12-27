@@ -45,7 +45,11 @@
       "Bash(del /q \"c:\\Users\\delas\\OneDrive\\Documentos\\Projetos\\Termyx\\src\\app\\api\\stripe\\webhook\\route.ts\")",
       "Bash(del /q \"c:\\Users\\delas\\OneDrive\\Documentos\\Projetos\\Termyx\\src\\lib\\stripe\\index.ts\")",
       "Bash(curl:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(npx supabase:*)",
+      "Bash(timeout /t 8 /nobreak)",
+      "Bash(ls:*)",
+      "Bash(ls -la \"c:\\\\Users\\\\delas\\\\OneDrive\\\\Documentos\\\\Projetos\\\\Termyx\\\\src\\\\app\"\" 2>/dev/null | grep -E \"^\\\\\\( \")"
     ],
     "deny": [],
     "ask": []

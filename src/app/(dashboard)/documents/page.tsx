@@ -234,15 +234,13 @@ export default function DocumentsPage() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                  {doc.status === 'draft' && (
-                    <Link
-                      href={`/documents/${doc.id}/edit`}
-                      className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-600 dark:text-neutral-400"
-                      title="Editar"
-                    >
-                      <Eye className="w-5 h-5" />
-                    </Link>
-                  )}
+                  <Link
+                    href={`/documents/${doc.id}`}
+                    className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-600 dark:text-neutral-400"
+                    title="Ver detalhes"
+                  >
+                    <Eye className="w-5 h-5" />
+                  </Link>
 
                   {doc.pdf_path && (
                     <button

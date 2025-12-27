@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
+import { getDeviceFingerprint, storeFingerprint } from '@/lib/fingerprint'
 import { Eye, EyeOff, Loader2, Check, X } from 'lucide-react'
 
 export default function SignupPage() {
@@ -16,8 +17,17 @@ export default function SignupPage() {
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fingerprint, setFingerprint] = useState<string | null>(null)
 
   const supabase = createClient()
+
+  // Get device fingerprint on mount
+  useEffect(() => {
+    getDeviceFingerprint().then(fp => {
+      setFingerprint(fp)
+      storeFingerprint(fp)
+    }).catch(console.error)
+  }, [])
 
   // Password strength indicators
   const passwordChecks = {
@@ -47,12 +57,36 @@ export default function SignupPage() {
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      // Anti-fraud check before signup
+      const fraudCheckResponse = await fetch('/api/fraud-check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          fingerprintHash: fingerprint,
+        }),
+      })
+
+      const fraudCheckData = await fraudCheckResponse.json()
+
+      if (!fraudCheckResponse.ok || !fraudCheckData.allowed) {
+        const fraudMessages: Record<string, string> = {
+          'DISPOSABLE_EMAIL': 'Emails temporarios nao sao permitidos. Use um email valido.',
+          'FINGERPRINT_ALREADY_USED': 'Ja existe uma conta associada a este dispositivo.',
+          'IP_RATE_LIMIT': 'Muitas contas criadas deste endereco. Tente novamente mais tarde.',
+        }
+        setError(fraudMessages[fraudCheckData.reason] || 'Nao foi possivel criar a conta.')
+        setLoading(false)
+        return
+      }
+
+      const { data: signupData, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             name,
+            device_fingerprint: fingerprint,
           },
         },
       })
@@ -66,12 +100,44 @@ export default function SignupPage() {
         return
       }
 
-      // Log successful signup
+      // Get user ID from signup response
+      const userId = signupData?.user?.id
+
+      if (userId) {
+        // Record anti-fraud data (IP and fingerprint)
+        try {
+          await fetch('/api/fraud-record', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId,
+              fingerprintHash: fingerprint,
+            }),
+          })
+        } catch {
+          // Non-blocking
+        }
+
+        // Ensure name is saved to users table
+        try {
+          await supabase
+            .from('users')
+            .update({ name })
+            .eq('id', userId)
+        } catch {
+          // Non-blocking - trigger should handle this
+        }
+      }
+
+      // Log successful signup with fingerprint
       try {
         await fetch('/api/audit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'user.signup', payload: { name } }),
+          body: JSON.stringify({
+            action: 'user.signup',
+            payload: { name, hasFingerprint: !!fingerprint }
+          }),
         })
       } catch {
         // Non-blocking audit
@@ -253,12 +319,12 @@ export default function SignupPage() {
         {/* Benefits */}
         <div className="mt-8 text-center text-sm text-neutral-500">
           <p className="font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-            Comece gratis com:
+            Teste gratuitamente:
           </p>
           <ul className="space-y-1">
-            <li>3 documentos por mes</li>
+            <li>2 documentos gratuitos para testar</li>
             <li>Templates profissionais</li>
-            <li>Envio por email e WhatsApp</li>
+            <li>Sem compromisso</li>
           </ul>
         </div>
       </div>

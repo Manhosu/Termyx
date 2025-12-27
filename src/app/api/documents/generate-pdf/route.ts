@@ -7,7 +7,11 @@ interface UserWithPlan {
   credits: number
   plan_id: string | null
   plans: { slug: string } | null
+  free_trial_documents_count: number | null
+  free_trial_used: boolean | null
 }
+
+const FREE_TRIAL_LIMIT = 2 // Maximum free documents for trial users
 
 // PDF generation using html-pdf-node (lightweight alternative to Puppeteer)
 // For production, consider using Puppeteer or a dedicated PDF service
@@ -120,10 +124,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 })
     }
 
-    // Get user data to check credits and plan
+    // Get user data to check credits, plan, and free trial status
     const { data: userData, error: userError } = await supabase
       .from('users')
-      .select('credits, plan_id, plans(slug)')
+      .select('credits, plan_id, plans(slug), free_trial_documents_count, free_trial_used')
       .eq('id', user.id)
       .single() as { data: UserWithPlan | null, error: unknown }
 
@@ -131,13 +135,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Usuario nao encontrado' }, { status: 404 })
     }
 
-    // Check if user has credits (free plan has limited credits)
+    // Check plan and trial eligibility
     const planSlug = userData.plans?.slug || 'free'
-    if (planSlug === 'free' && userData.credits <= 0) {
-      return NextResponse.json({
-        error: 'Creditos insuficientes. Faca upgrade do seu plano.',
-        code: 'INSUFFICIENT_CREDITS'
-      }, { status: 402 })
+    const freeTrialCount = userData.free_trial_documents_count || 0
+
+    // For users without a paid plan, check free trial limit
+    if (planSlug === 'free') {
+      // Check if user has exceeded the free trial limit (2 documents)
+      if (freeTrialCount >= FREE_TRIAL_LIMIT) {
+        return NextResponse.json({
+          error: 'Limite de documentos gratuitos atingido. Assine um plano para continuar.',
+          code: 'FREE_TRIAL_EXHAUSTED',
+          trialLimit: FREE_TRIAL_LIMIT,
+          documentsUsed: freeTrialCount
+        }, { status: 402 })
+      }
+
+      // Also check credits as a secondary measure
+      if (userData.credits <= 0 && freeTrialCount >= FREE_TRIAL_LIMIT) {
+        return NextResponse.json({
+          error: 'Creditos insuficientes. Faca upgrade do seu plano.',
+          code: 'INSUFFICIENT_CREDITS'
+        }, { status: 402 })
+      }
     }
 
     // Generate full HTML with styles
@@ -176,22 +196,44 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Erro ao salvar documento' }, { status: 500 })
     }
 
-    // Deduct credit for free plan users
+    // For free plan users: increment trial counter and optionally deduct credits
     if (planSlug === 'free') {
+      const newTrialCount = freeTrialCount + 1
+      const isTrialExhausted = newTrialCount >= FREE_TRIAL_LIMIT
+
       await supabase
         .from('users')
-        .update({ credits: userData.credits - 1 })
+        .update({
+          credits: Math.max(0, userData.credits - 1),
+          free_trial_documents_count: newTrialCount,
+          free_trial_used: isTrialExhausted
+        })
         .eq('id', user.id)
     }
 
     // Log the action
-    await audit.documentGeneratePdf(user.id, documentId, { plan: planSlug })
+    await audit.documentGeneratePdf(user.id, documentId, {
+      plan: planSlug,
+      freeTrialCount: planSlug === 'free' ? freeTrialCount + 1 : undefined
+    })
 
-    return NextResponse.json({
+    // Build response with trial info for free users
+    const response: Record<string, unknown> = {
       success: true,
       pdfPath: fileName,
       message: 'Documento gerado com sucesso'
-    })
+    }
+
+    if (planSlug === 'free') {
+      response.trial = {
+        documentsUsed: freeTrialCount + 1,
+        documentsRemaining: Math.max(0, FREE_TRIAL_LIMIT - (freeTrialCount + 1)),
+        limit: FREE_TRIAL_LIMIT,
+        exhausted: (freeTrialCount + 1) >= FREE_TRIAL_LIMIT
+      }
+    }
+
+    return NextResponse.json(response)
 
   } catch (error) {
     console.error('PDF generation error:', error)

@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { ArrowLeft, Download, Send, Share2, Trash2, Calendar, Clock, CreditCard, Loader2, Mail, MessageCircle, Copy, Check } from 'lucide-react'
+import { ArrowLeft, Download, Send, Share2, Trash2, Calendar, Clock, CreditCard, Loader2, Mail, MessageCircle, Copy, Check, FileText } from 'lucide-react'
+import { useUser } from '@/lib/hooks/useUser'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -54,8 +55,17 @@ export default function DocumentDetailPage() {
   const [showShareModal, setShowShareModal] = useState(false)
   const [shareLink, setShareLink] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [generating, setGenerating] = useState(false)
+  const [generationError, setGenerationError] = useState<string | null>(null)
 
   const supabase = createClient()
+  const { profile } = useUser()
+
+  const FREE_TRIAL_LIMIT = 2
+  const freeTrialCount = profile?.free_trial_documents_count || 0
+  const isTrialExhausted = freeTrialCount >= FREE_TRIAL_LIMIT
+  const planSlug = profile?.plan?.slug || 'free'
+  const showWatermark = planSlug === 'free' && isTrialExhausted
 
   useEffect(() => {
     loadDocument()
@@ -102,6 +112,53 @@ export default function DocumentDetailPage() {
 
     if (data?.signedUrl) {
       window.open(data.signedUrl, '_blank')
+    }
+  }
+
+  const handleGeneratePdf = async () => {
+    if (!document?.templates?.content_html) return
+
+    setGenerating(true)
+    setGenerationError(null)
+
+    try {
+      const response = await fetch('/api/documents/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          documentId: document.id,
+          html: renderPreview()
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        if (data.code === 'FREE_TRIAL_EXHAUSTED') {
+          setGenerationError('Limite de documentos gratuitos atingido. Assine um plano para continuar.')
+        } else {
+          setGenerationError(data.error || 'Erro ao gerar PDF')
+        }
+        return
+      }
+
+      // Update document with new pdf_path
+      await supabase
+        .from('documents')
+        .update({
+          pdf_path: data.pdfPath,
+          status: 'generated',
+          generated_at: new Date().toISOString()
+        })
+        .eq('id', document.id)
+
+      // Reload document to show updated state
+      await loadDocument()
+    } catch (error) {
+      setGenerationError('Erro ao gerar PDF. Tente novamente.')
+      console.error('PDF generation error:', error)
+    } finally {
+      setGenerating(false)
     }
   }
 
@@ -209,6 +266,23 @@ export default function DocumentDetailPage() {
         </div>
 
         <div className="flex items-center gap-2 ml-11 sm:ml-0">
+          {/* Gerar PDF para rascunhos */}
+          {document.status === 'draft' && !document.pdf_path && (
+            <button
+              onClick={handleGeneratePdf}
+              disabled={generating || (planSlug === 'free' && isTrialExhausted)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title={planSlug === 'free' && isTrialExhausted ? 'Limite de documentos gratuitos atingido' : 'Gerar PDF'}
+            >
+              {generating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <FileText className="w-4 h-4" />
+              )}
+              {generating ? 'Gerando...' : 'Gerar PDF'}
+            </button>
+          )}
+
           {document.pdf_path && (
             <button
               onClick={handleDownload}
@@ -246,17 +320,151 @@ export default function DocumentDetailPage() {
         </div>
       </div>
 
+      {/* Error message */}
+      {generationError && (
+        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-400">
+          {generationError}
+          {generationError.includes('Limite') && (
+            <Link href="/pricing" className="ml-2 underline font-medium">
+              Ver planos
+            </Link>
+          )}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Preview */}
         <div className="lg:col-span-2">
           <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6">
-            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
-              Preview do Documento
-            </h2>
-            <div
-              className="bg-white rounded-xl border border-neutral-200 p-8 min-h-[400px] text-neutral-900 prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: renderPreview() }}
-            />
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                Preview do Documento
+              </h2>
+              {showWatermark && (
+                <span className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-1 rounded-lg">
+                  Preview com marca d'agua
+                </span>
+              )}
+            </div>
+
+            {/* Document Preview with Watermark */}
+            <div className="relative overflow-hidden rounded-xl border border-neutral-200">
+              <div
+                className="bg-white p-8 min-h-[400px] text-neutral-900 prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: renderPreview() }}
+              />
+
+              {/* Multi-layer Anti-AI Watermark System */}
+              {showWatermark && (
+                <>
+                  {/* Layer 1: Main diagonal watermarks */}
+                  <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
+                    <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'rotate(-35deg) scale(2)' }}>
+                      {[...Array(8)].map((_, row) => (
+                        <div key={row} className="absolute whitespace-nowrap" style={{ top: `${row * 15 - 30}%` }}>
+                          {[...Array(4)].map((_, col) => (
+                            <span
+                              key={col}
+                              className="inline-block mx-16 text-5xl font-bold"
+                              style={{
+                                color: 'rgba(16, 185, 129, 0.18)',
+                                textShadow: '2px 2px 4px rgba(16, 185, 129, 0.12)',
+                                letterSpacing: '0.15em'
+                              }}
+                            >
+                              TERMYX
+                            </span>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Layer 2: Counter-diagonal pattern */}
+                  <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
+                    <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'rotate(35deg) scale(2)' }}>
+                      {[...Array(6)].map((_, row) => (
+                        <div key={row} className="absolute whitespace-nowrap" style={{ top: `${row * 20 - 20}%`, left: '10%' }}>
+                          {[...Array(3)].map((_, col) => (
+                            <span
+                              key={col}
+                              className="inline-block mx-20 text-3xl font-semibold"
+                              style={{
+                                color: 'rgba(20, 184, 166, 0.12)',
+                                letterSpacing: '0.2em'
+                              }}
+                            >
+                              DOCUMENTO NAO OFICIAL
+                            </span>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Layer 3: Grid pattern micro-watermarks */}
+                  <div className="absolute inset-0 pointer-events-none select-none" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
+                    <div className="grid grid-cols-6 gap-4 h-full p-4">
+                      {[...Array(36)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-center text-xs font-medium"
+                          style={{
+                            color: 'rgba(16, 185, 129, 0.08)',
+                            transform: `rotate(${(i % 4) * 15 - 30}deg)`
+                          }}
+                        >
+                          TERMYX
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Layer 4: Central prominent watermark */}
+                  <div className="absolute inset-0 pointer-events-none select-none flex items-center justify-center" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
+                    <div
+                      className="text-7xl font-black tracking-widest"
+                      style={{
+                        color: 'rgba(16, 185, 129, 0.15)',
+                        textShadow: '0 0 30px rgba(16, 185, 129, 0.1), 0 0 60px rgba(16, 185, 129, 0.05)',
+                        transform: 'rotate(-20deg)'
+                      }}
+                    >
+                      PREVIEW
+                    </div>
+                  </div>
+
+                  {/* Layer 5: Noise pattern overlay */}
+                  <div
+                    className="absolute inset-0 pointer-events-none select-none opacity-[0.03]"
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                      userSelect: 'none',
+                      WebkitUserSelect: 'none'
+                    }}
+                  />
+
+                  {/* Layer 6: Border watermark text */}
+                  <div className="absolute inset-0 pointer-events-none select-none" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
+                    <div className="absolute top-2 left-0 right-0 text-center text-[10px] font-semibold tracking-[0.5em]" style={{ color: 'rgba(16, 185, 129, 0.25)' }}>
+                      DOCUMENTO DE DEMONSTRACAO - NAO VALIDO - TERMYX.COM.BR
+                    </div>
+                    <div className="absolute bottom-2 left-0 right-0 text-center text-[10px] font-semibold tracking-[0.5em]" style={{ color: 'rgba(16, 185, 129, 0.25)' }}>
+                      ASSINE UM PLANO PARA REMOVER A MARCA D'AGUA - TERMYX.COM.BR
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {showWatermark && (
+              <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl text-sm text-amber-700 dark:text-amber-400">
+                <strong>Limite atingido:</strong> Voce usou seus {FREE_TRIAL_LIMIT} documentos gratuitos.
+                <Link href="/pricing" className="ml-1 underline font-medium">
+                  Assine um plano
+                </Link> para remover a marca d'agua e continuar gerando documentos.
+              </div>
+            )}
           </div>
         </div>
 

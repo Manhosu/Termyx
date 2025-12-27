@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ArrowLeft, FileText, Download, Save, Eye, EyeOff, Loader2, Users, Building2, ChevronDown, Plus, Check } from 'lucide-react'
 import Link from 'next/link'
+import NoCreditsModal from '@/components/billing/NoCreditsModal'
 
 interface Placeholder {
   name: string
@@ -102,7 +103,37 @@ export default function NewDocumentPage() {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null)
   const [showClientDropdown, setShowClientDropdown] = useState(false)
 
+  // Credits and eligibility state
+  const [credits, setCredits] = useState<number | null>(null)
+  const [canCreate, setCanCreate] = useState<boolean | null>(null)
+  const [showNoCreditsModal, setShowNoCreditsModal] = useState(false)
+  const [checkingCredits, setCheckingCredits] = useState(true)
+
   const supabase = createClient()
+
+  // Check credits on mount
+  useEffect(() => {
+    async function checkCreditsEligibility() {
+      try {
+        const response = await fetch('/api/documents/validate-eligibility')
+        const data = await response.json()
+
+        setCredits(data.credits)
+        setCanCreate(data.canCreate)
+
+        if (!data.canCreate) {
+          setShowNoCreditsModal(true)
+        }
+      } catch (error) {
+        console.error('Error checking credits:', error)
+        setCanCreate(false)
+      } finally {
+        setCheckingCredits(false)
+      }
+    }
+
+    checkCreditsEligibility()
+  }, [])
 
   // Load company profile and clients
   useEffect(() => {
@@ -238,6 +269,12 @@ export default function NewDocumentPage() {
   const handleSaveDraft = async () => {
     if (!template) return
 
+    // VERIFICACAO DE CREDITOS - Bloquear se sem creditos
+    if (!canCreate || (credits !== null && credits <= 0)) {
+      setShowNoCreditsModal(true)
+      return
+    }
+
     setSaving(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -255,7 +292,27 @@ export default function NewDocumentPage() {
         .select()
         .single()
 
-      if (error) throw error
+      if (error) {
+        // Se RLS bloqueou por falta de creditos
+        if (error.code === '42501' || error.message?.includes('credits')) {
+          setShowNoCreditsModal(true)
+          return
+        }
+        throw error
+      }
+
+      // DEDUZIR CREDITO apos sucesso
+      const deductResponse = await fetch('/api/credits/deduct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ documentId: data.id })
+      })
+
+      if (deductResponse.ok) {
+        const deductData = await deductResponse.json()
+        setCredits(deductData.newBalance)
+        setCanCreate(deductData.newBalance > 0)
+      }
 
       router.push(`/documents/${data.id}`)
     } catch (err) {
@@ -269,8 +326,26 @@ export default function NewDocumentPage() {
   const handleGeneratePDF = async () => {
     if (!template) return
 
+    // VERIFICACAO DE CREDITOS - Bloquear se sem creditos
+    if (!canCreate || (credits !== null && credits <= 0)) {
+      setShowNoCreditsModal(true)
+      return
+    }
+
     setGenerating(true)
+    setError(null)
     try {
+      // Validar ANTES de inserir documento
+      const eligibilityResponse = await fetch('/api/documents/validate-eligibility')
+      const eligibility = await eligibilityResponse.json()
+
+      if (!eligibility.canCreate) {
+        setCredits(eligibility.credits)
+        setCanCreate(false)
+        setShowNoCreditsModal(true)
+        return
+      }
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Usuario nao autenticado')
 
@@ -286,7 +361,14 @@ export default function NewDocumentPage() {
         .select()
         .single()
 
-      if (saveError) throw saveError
+      if (saveError) {
+        // Se RLS bloqueou por falta de creditos
+        if (saveError.code === '42501' || saveError.message?.includes('credits')) {
+          setShowNoCreditsModal(true)
+          return
+        }
+        throw saveError
+      }
 
       const response = await fetch('/api/documents/generate-pdf', {
         method: 'POST',
@@ -297,9 +379,20 @@ export default function NewDocumentPage() {
         })
       })
 
-      if (!response.ok) throw new Error('Erro ao gerar PDF')
-
       const result = await response.json()
+
+      // Check if no credits
+      if (!response.ok) {
+        if (result.code === 'FREE_TRIAL_EXHAUSTED' || result.code === 'NO_CREDITS') {
+          setCredits(0)
+          setCanCreate(false)
+          setShowNoCreditsModal(true)
+          // Clean up the draft document
+          await supabase.from('documents').delete().eq('id', doc.id)
+          return
+        }
+        throw new Error(result.error || 'Erro ao gerar PDF')
+      }
 
       await supabase
         .from('documents')
@@ -311,10 +404,23 @@ export default function NewDocumentPage() {
         })
         .eq('id', doc.id)
 
+      // DEDUZIR CREDITO apos sucesso
+      const deductResponse = await fetch('/api/credits/deduct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ documentId: doc.id })
+      })
+
+      if (deductResponse.ok) {
+        const deductData = await deductResponse.json()
+        setCredits(deductData.newBalance)
+        setCanCreate(deductData.newBalance > 0)
+      }
+
       router.push(`/documents/${doc.id}`)
     } catch (err) {
       console.error('Erro ao gerar PDF:', err)
-      setError('Erro ao gerar o PDF')
+      setError(err instanceof Error ? err.message : 'Erro ao gerar o PDF')
     } finally {
       setGenerating(false)
     }
@@ -389,8 +495,9 @@ export default function NewDocumentPage() {
 
           <button
             onClick={handleSaveDraft}
-            disabled={saving}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            disabled={saving || !canCreate || checkingCredits}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            title={!canCreate ? 'Sem creditos disponiveis' : 'Salvar como rascunho'}
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             <span className="hidden sm:inline">Salvar Rascunho</span>
@@ -398,14 +505,55 @@ export default function NewDocumentPage() {
 
           <button
             onClick={handleGeneratePDF}
-            disabled={generating}
-            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            disabled={generating || !canCreate || checkingCredits}
+            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            title={!canCreate ? 'Sem creditos disponiveis' : 'Gerar PDF do documento'}
           >
             {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             <span className="hidden sm:inline">Gerar PDF</span>
           </button>
         </div>
       </div>
+
+      {/* No Credits Warning Banner */}
+      {!checkingCredits && !canCreate && (
+        <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="flex-1">
+              <p className="font-semibold text-amber-800 dark:text-amber-200">
+                Voce nao tem creditos disponiveis
+              </p>
+              <p className="text-sm text-amber-700 dark:text-amber-300">
+                Cada documento (rascunho ou finalizado) consome 1 credito. Compre creditos ou assine um plano para continuar.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Link
+                href="/billing"
+                className="px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors"
+              >
+                Comprar Creditos
+              </Link>
+              <Link
+                href="/pricing"
+                className="px-4 py-2 border border-amber-600 text-amber-700 dark:text-amber-300 text-sm font-medium rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors"
+              >
+                Ver Planos
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Credits Info Badge */}
+      {!checkingCredits && credits !== null && canCreate && (
+        <div className="mb-4 flex items-center gap-2">
+          <span className="text-sm text-neutral-500">Creditos disponiveis:</span>
+          <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-medium rounded-lg">
+            {credits}
+          </span>
+        </div>
+      )}
 
       {/* Quick Select Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -627,6 +775,13 @@ export default function NewDocumentPage() {
           background-color: #f9fafb;
         }
       `}</style>
+
+      {/* No Credits Modal */}
+      <NoCreditsModal
+        isOpen={showNoCreditsModal}
+        onClose={() => setShowNoCreditsModal(false)}
+        credits={credits || 0}
+      />
     </div>
   )
 }

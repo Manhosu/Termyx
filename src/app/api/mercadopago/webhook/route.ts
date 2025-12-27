@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import { getPayment } from '@/lib/mercadopago'
 import { audit } from '@/lib/audit'
 import { sendEmail, emailTemplates } from '@/lib/email'
+import crypto from 'crypto'
 
 // Use service role for webhook operations
 const supabaseAdmin = createClient(
@@ -10,12 +11,67 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+/**
+ * Verify Mercado Pago webhook signature
+ */
+function verifyWebhookSignature(
+  xSignature: string | null,
+  xRequestId: string | null,
+  dataId: string
+): boolean {
+  const secret = process.env.MP_WEBHOOK_SECRET
+  if (!secret) {
+    console.warn('MP_WEBHOOK_SECRET not configured - skipping signature verification')
+    return true
+  }
+
+  if (!xSignature || !xRequestId) {
+    console.error('Missing x-signature or x-request-id headers')
+    return false
+  }
+
+  try {
+    const parts = xSignature.split(',')
+    const tsMatch = parts.find(p => p.startsWith('ts='))
+    const v1Match = parts.find(p => p.startsWith('v1='))
+
+    if (!tsMatch || !v1Match) return false
+
+    const ts = tsMatch.split('=')[1]
+    const v1 = v1Match.split('=')[1]
+    const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`
+
+    const hmac = crypto.createHmac('sha256', secret)
+    hmac.update(manifest)
+    const calculatedSignature = hmac.digest('hex')
+
+    return crypto.timingSafeEqual(
+      Buffer.from(calculatedSignature),
+      Buffer.from(v1)
+    )
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Check if payment was already processed (idempotency)
+ */
+async function isPaymentAlreadyProcessed(paymentId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from('payments')
+    .select('id')
+    .eq('gateway_id', paymentId)
+    .eq('status', 'paid')
+    .single()
+
+  return !!data
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Mercado Pago sends different notification types
-    // We're interested in payment notifications
     if (body.type !== 'payment') {
       return NextResponse.json({ received: true })
     }
@@ -25,8 +81,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing payment ID' }, { status: 400 })
     }
 
+    // Verify webhook signature
+    const xSignature = request.headers.get('x-signature')
+    const xRequestId = request.headers.get('x-request-id')
+
+    if (!verifyWebhookSignature(xSignature, xRequestId, String(paymentId))) {
+      console.error('Invalid webhook signature for payment:', paymentId)
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+    }
+
+    // Check idempotency - prevent duplicate processing
+    if (await isPaymentAlreadyProcessed(String(paymentId))) {
+      console.log(`Payment ${paymentId} already processed, skipping`)
+      return NextResponse.json({ received: true, message: 'Already processed' })
+    }
+
     // Get payment details from Mercado Pago
-    const payment = await getPayment(paymentId)
+    const payment = await getPayment(String(paymentId))
 
     if (!payment) {
       return NextResponse.json({ error: 'Payment not found' }, { status: 404 })

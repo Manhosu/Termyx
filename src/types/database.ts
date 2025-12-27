@@ -32,6 +32,11 @@ export interface User {
   updated_at: string
   metadata: Record<string, unknown>
   plan?: Plan
+  free_trial_used: boolean | null
+  free_trial_documents_count: number | null
+  device_fingerprint: string | null
+  signup_ip: string | null
+  signup_user_agent: string | null
 }
 
 export type PlaceholderType =
