@@ -49,7 +49,8 @@
       "Bash(npx supabase:*)",
       "Bash(timeout /t 8 /nobreak)",
       "Bash(ls:*)",
-      "Bash(ls -la \"c:\\\\Users\\\\delas\\\\OneDrive\\\\Documentos\\\\Projetos\\\\Termyx\\\\src\\\\app\"\" 2>/dev/null | grep -E \"^\\\\\\( \")"
+      "Bash(ls -la \"c:\\\\Users\\\\delas\\\\OneDrive\\\\Documentos\\\\Projetos\\\\Termyx\\\\src\\\\app\"\" 2>/dev/null | grep -E \"^\\\\\\( \")",
+      "Bash(taskkill /F /PID 18788)"
     ],
     "deny": [],
     "ask": []

@@ -16,6 +16,9 @@ export function Header({ onMenuClick }: HeaderProps) {
   const [searchValue, setSearchValue] = useState('')
   const [showNotifications, setShowNotifications] = useState(false)
 
+  // TODO: Implementar busca de notificacoes do banco
+  const unreadNotificationsCount = 0
+
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -102,12 +105,14 @@ export function Header({ onMenuClick }: HeaderProps) {
             whileTap={{ scale: 0.95 }}
           >
             <Bell className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
-            <motion.span
-              className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-neutral-800"
-              aria-hidden="true"
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
+            {unreadNotificationsCount > 0 && (
+              <motion.span
+                className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-neutral-800"
+                aria-hidden="true"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            )}
           </motion.button>
 
           {/* Notifications Dropdown */}
